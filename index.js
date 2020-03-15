@@ -13,7 +13,7 @@ var io = socket(server)
 
 //keeping track of active clients
 var clientId=0
-var lookup=[]
+var socketLookup=[]
 var isActiveLookup=[]
 
 //useful source for socket commands
@@ -22,16 +22,32 @@ var isActiveLookup=[]
 //networking protocols
 io.on("connection",function(socket){
     socket.id=clientId++
-    lookup[socket.id]=socket
+    socketLookup[socket.id]=socket
     isActiveLookup[socket.id]=true
-    lookup[socket.id].emit("serverPrivate","connected to server on socket: "+socket.id)
+    socketLookup[socket.id].emit("serverPrivate","connected to server on socket: "+socket.id)
     console.log("client connected on socket: ",socket.id +" Current active sockets: "+getTotalActiveSockets())
     io.sockets.emit("serverPublic","new connection on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
 
 
     //in
     socket.on("chat",function(data){
-        io.sockets.emit("chat",data)
+        m = data.message
+
+        //check for DOS attack
+        if(lengthInUtf8Bytes(m)>150){
+
+            //replace their message with something funny
+            pranks=["a","b","c"]
+            m=pranks[Math.floor(Math.random() * pranks.length)];
+        }
+
+        //check for html injections
+        m=m.split("<").join("&lt;").split(">").join("&gt;")
+
+        //send message
+        io.sockets.emit("chat",{
+            message: m
+        })
     });
 
     socket.on('disconnect', function(){
@@ -62,10 +78,17 @@ function getIp(){
 
 function getTotalActiveSockets(){
     var total=0
-    for(var i=0;i<lookup.length;i++){
+    for(var i=0;i<socketLookup.length;i++){
         if(isActiveLookup[i]){
             total++
         }
     }
     return total
 }
+
+//prevents dos attacks by sending large messages
+function lengthInUtf8Bytes(str) {
+    // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
+    var m = encodeURIComponent(str).match(/%[89ABab]/g);
+    return str.length + (m ? m.length : 0);
+  }
