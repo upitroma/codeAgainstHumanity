@@ -6,6 +6,7 @@ var app = express();
 var server = app.listen(4000,function(){
     console.log("Server is up on http://"+getIp()+":4000")
 });
+app.use(express.static("public"))
 
 //gets the ip of the server
 function getIp(){
