@@ -4,11 +4,15 @@ var socket = io.connect(window.location.href);//server location = browser url (i
 //get objects from html
 var message = document.getElementById('message'),
     btn = document.getElementById('send'),
-    output = document.getElementById('output');
+    output = document.getElementById('output'),
+    serverInfo = document.getElementById("serverInfo");
 
 //networking in
 socket.on("serverPrivate",function(data){
-    output.innerHTML+= "<p><server>"+"Server (only you can read this)"+": </server>"+data+"</p>";
+    serverInfo.innerHTML= "<p>"+"Server"+": "+data+"</p>";
+});
+socket.on("serverPublic",function(data){
+    output.innerHTML+= "<p>"+"Server"+": "+data+"</p>";
 });
 socket.on("chat",function(data){
     output.innerHTML+= "<p>"+data.message+"</p>";
