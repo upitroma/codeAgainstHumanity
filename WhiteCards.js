@@ -1,9 +1,3 @@
-class Card{
-    constructor(s){
-        this.rarity=1
-        this.text=s
-    }
-}
 var cards = [
     "a",
     "b",
