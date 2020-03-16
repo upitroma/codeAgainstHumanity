@@ -27,3 +27,11 @@ btn.addEventListener("click",function(){
         message: message.value
     });
 });
+message.addEventListener("keyup", function(event) {
+    //if you hit enter while typing a message
+    if (event.keyCode === 13) {
+        socket.emit("chat",{
+            message: message.value
+        });
+    }
+  }); 
