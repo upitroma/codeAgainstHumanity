@@ -21,7 +21,9 @@ var isActiveLookup=[]
 var playerLookup=[]
 
 //keeping track of cards
-whiteIndex=0
+var whiteIndex=0
+var blackIndex=0
+
 
 //shuffle white cards
 for (let i = 0; i < whiteCards.length; i++) {
@@ -30,6 +32,14 @@ for (let i = 0; i < whiteCards.length; i++) {
     whiteCards[i]=whiteCards[r]
     whiteCards[r]=temp
 }
+//shuffle black cards
+for (let i = 0; i < blackCards.length; i++) {
+    let r = Math.floor(Math.random() * (i));
+    temp = blackCards[i]
+    blackCards[i]=blackCards[r]
+    blackCards[r]=temp
+}
+
 
 class Player{
     constructor(socketId){
@@ -51,13 +61,15 @@ io.on("connection",function(socket){
     socketLookup[socket.id]=socket
     isActiveLookup[socket.id]=true
     playerLookup[socket.id] = new Player(socket.id)
-    //tell everyone
+    //tell everyone else
     socketLookup[socket.id].emit("serverPrivate","connected to server on socket: "+socket.id)
     console.log("client connected on socket: ",socket.id +" Current active sockets: "+getTotalActiveSockets())
     io.sockets.emit("serverPublic","new connection on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
     //deal cards
     socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
     console.log(playerLookup[socket.id].whites)
+    socketLookup[socket.id].emit("newBlack",blackCards[blackIndex])
+
 
     //relay chat
     socket.on("chat",function(data){

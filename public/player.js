@@ -7,6 +7,7 @@ var message = document.getElementById('message'),
     output = document.getElementById('output'),
     serverInfo = document.getElementById("serverInfo"),
     whites = document.getElementById("whiteCards"),
+    black = document.getElementById("blackCard"),
     chatBox = document.getElementById("chat");
 
 //networking in
@@ -26,6 +27,9 @@ socket.on("deal",function(data){
     for(i=0; i<data.length;i++){
         whites.innerHTML+= "<button>"+data[i]+"</button>";
     }
+})
+socket.on("newBlack",function(data){
+    black.innerHTML="<p>"+data+"</p>"
 })
 
 //networking out
