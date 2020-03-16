@@ -51,10 +51,11 @@ class Player{
 }
 
 //gamestate
-var currentGameState="choosing"
+var currentGameState="Choose a card"
 var GameTimer=consts.choosingTimer
 function gameState(){
     io.sockets.emit("timer",GameTimer--)
+    io.sockets.emit("gamestate",currentGameState)
 }
 setInterval(gameState, 1000);
 

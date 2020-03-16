@@ -9,6 +9,7 @@ var message = document.getElementById('message'),
     whites = document.getElementById("whiteCards"),
     black = document.getElementById("blackCard"),
     timer = document.getElementById("timer"),
+    gamestate = document.getElementById("gamestate"),
     chatBox = document.getElementById("chat");
 
 //get username
@@ -41,6 +42,9 @@ socket.on("newBlack",function(data){
 })
 socket.on("timer",function(data){
     timer.innerHTML="<p>"+data+"</p>"
+})
+socket.on("gamestate",function(data){
+    gamestate.innerHTML="<p>"+data+"</p>"
 })
 
 //networking out
