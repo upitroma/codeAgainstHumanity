@@ -32,6 +32,8 @@ for (let i = 0; i < whiteCards.length; i++) {
     whiteCards[i]=whiteCards[r]
     whiteCards[r]=temp
 }
+whiteCards.push(consts.outOfCards)
+
 //shuffle black cards
 for (let i = 0; i < blackCards.length; i++) {
     let r = Math.floor(Math.random() * (i));
@@ -39,6 +41,8 @@ for (let i = 0; i < blackCards.length; i++) {
     blackCards[i]=blackCards[r]
     blackCards[r]=temp
 }
+blackCards.push(consts.outOfCards)
+var currentBlackCard=getBlackCard()
 
 class Player{
     constructor(socketId){
@@ -51,13 +55,28 @@ class Player{
 }
 
 //gamestate
-var gamestate=consts.strChooseCardGameState
+var gamestate=consts.strChooseCard
 var GameTimer=consts.choosingTimer
 function gameState(){
 
-    if(GameTimer<=0&&gamestate==consts.strChooseCardGameState){
+    if(GameTimer<=0&&gamestate==consts.strChooseCard){
         gamestate=consts.strVoteCard
         GameTimer=consts.voteingTimer
+    }
+    else if(GameTimer<=0&&gamestate==consts.strVoteCard){
+        gamestate=consts.strResults
+        GameTimer=consts.resultsTimer
+    }
+    else if(GameTimer<=0&&gamestate==consts.strResults){
+        gamestate=consts.strNewRound
+        GameTimer=consts.newRoundTimer
+        currentBlackCard=getBlackCard()
+        io.sockets.emit("newBlack",currentBlackCard)
+        console.log("black card index: "+blackIndex)
+    }
+    else if(GameTimer<=0&&gamestate==consts.strNewRound){
+        gamestate=consts.strChooseCard
+        GameTimer=consts.choosingTimer
     }
 
     GameTimer--
@@ -87,7 +106,7 @@ io.on("connection",function(socket){
     //deal cards
     socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
     console.log(playerLookup[socket.id].whites)
-    socketLookup[socket.id].emit("newBlack",blackCards[blackIndex])
+    socketLookup[socket.id].emit("newBlack",currentBlackCard)
 
 
     //relay chat
@@ -177,13 +196,22 @@ function randomChoice(arr){
 
 //game functions
 function getWhiteCard(){
-    if(whiteIndex>=whiteCards.length){
+    if(whiteIndex>=whiteCards.length-1){
         whiteIndex=0
     }
     else{
         whiteIndex++
     }
     return whiteCards[whiteIndex]
+}
+function getBlackCard(){
+    if(blackIndex>=blackCards.length-1){
+        blackIndex=0
+    }
+    else{
+        blackIndex++
+    }
+    return blackCards[blackIndex]
 }
 function generateHand(){
     let tempCards=[]

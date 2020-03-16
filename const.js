@@ -1,9 +1,14 @@
 var constants = {
     cardsPerHand: 5,
-    choosingTimer:20,
-    voteingTimer:20,
-    strChooseCardGameState: "Choose a card",
+    choosingTimer:10,
+    voteingTimer:10,
+    resultsTimer:5,
+    newRoundTimer:5,
+    strChooseCard: "Choose a card",
+    strNewRound: "Next Round",
     strVoteCard: "Vote for your favorite",
+    strResults: "Round Results",
+    outOfCards: "I'm all out of cards. Feel free to make your own and send them to me. I'll try to add them in.",
 }
 
 exports.constants=constants;
