@@ -5,7 +5,8 @@ var socket = io.connect(window.location.href);//server location = browser url (i
 var message = document.getElementById('message'),
     btn = document.getElementById('send'),
     output = document.getElementById('output'),
-    serverInfo = document.getElementById("serverInfo");
+    serverInfo = document.getElementById("serverInfo"),
+    chatBox = document.getElementById("chat");
 
 //networking in
 socket.on("serverPrivate",function(data){
@@ -16,6 +17,8 @@ socket.on("serverPublic",function(data){
 });
 socket.on("chat",function(data){
     output.innerHTML+= "<p>"+data.message+"</p>";
+    output.scrollTop = output.scrollHeight
+    chatBox.scrollTop = chatBox.scrollHeight
 });
 
 //networking out

@@ -1,6 +1,7 @@
 var express = require("express")
 var socket = require("socket.io")
 
+
 //app setup
 var app = express();
 var server = app.listen(4000,function(){
@@ -21,32 +22,21 @@ var isActiveLookup=[]
 
 //networking protocols
 io.on("connection",function(socket){
+    //remember new connection
     socket.id=clientId++
     socketLookup[socket.id]=socket
     isActiveLookup[socket.id]=true
+
+    //tell everyone
     socketLookup[socket.id].emit("serverPrivate","connected to server on socket: "+socket.id)
     console.log("client connected on socket: ",socket.id +" Current active sockets: "+getTotalActiveSockets())
     io.sockets.emit("serverPublic","new connection on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
 
 
-    //in
     socket.on("chat",function(data){
-        m = data.message
-
-        //check for DOS attack
-        if(lengthInUtf8Bytes(m)>150){
-
-            //replace their message with something funny
-            pranks=["a","b","c"]
-            m=pranks[Math.floor(Math.random() * pranks.length)];
-        }
-
-        //check for html injections
-        m=m.split("<").join("&lt;").split(">").join("&gt;")
-
         //send message
         io.sockets.emit("chat",{
-            message: m
+            message: scrub(data.message)
         })
     });
 
@@ -88,7 +78,24 @@ function getTotalActiveSockets(){
 
 //prevents dos attacks by sending large messages
 function lengthInUtf8Bytes(str) {
-    // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
     var m = encodeURIComponent(str).match(/%[89ABab]/g);
     return str.length + (m ? m.length : 0);
-  }
+}
+
+//pranks users that try to hack
+function prankMsg(){
+    pranks=["i prefer apple music","i hate star wars","i like mayonnaise more then ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water"]
+    return pranks[Math.floor(Math.random() * pranks.length)];
+}
+function scrub(s){
+    //TODO: check for spamming
+
+    //check for DOS attack and injections
+    if(lengthInUtf8Bytes(s)>200||s.includes("<")&&s.includes(">")){
+
+        //replace their message with something funny
+        s=prankMsg()
+    }
+    s=s.split("<").join("&lt;").split(">").join("&gt;")
+    return s
+}
