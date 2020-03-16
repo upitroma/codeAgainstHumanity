@@ -104,7 +104,6 @@ io.on("connection",function(socket){
     io.sockets.emit("serverPublic","new connection on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
     //deal cards
     socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
-    console.log(playerLookup[socket.id].whites)
     socketLookup[socket.id].emit("newBlack",currentBlackCard)
 
 
