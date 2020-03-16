@@ -75,7 +75,8 @@ io.on("connection",function(socket){
     socket.on("chat",function(data){
         //send message
         io.sockets.emit("chat",{
-            message: scrub(data.message)
+            message: scrub(data.message),
+            name: playerLookup[socket.id].name
         })
     });
 
@@ -85,6 +86,16 @@ io.on("connection",function(socket){
         isActiveLookup[socket.id]=false
         io.sockets.emit("serverPublic","user disconnected on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
     });
+
+    //get player name
+    socket.on('username',function(data){
+        if(data.name==""){
+            playerLookup[socket.id].name="anonymous"
+        }
+        else{
+            playerLookup[socket.id].name=scrub(data.name)
+        }
+    })
 });
 
 
@@ -123,18 +134,21 @@ function lengthInUtf8Bytes(str) {
 }
 
 //pranks users that try to hack
-function prankMsg(){
+function prank(){
     return randomChoice(["i prefer apple music","i hate star wars","i like mayonnaise more then ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water"])
-   
 }
 function scrub(s){
     //TODO: check for spamming
+
+    if(!s||s.length===0){
+        s="anonymous"
+    }
 
     //check for DOS attack and injections
     if(lengthInUtf8Bytes(s)>200||s.includes("<")&&s.includes(">")){
 
         //replace their message with something funny
-        s=prankMsg()
+        s=prank()
     }
     s=s.split("<").join("&lt;").split(">").join("&gt;")
     return s

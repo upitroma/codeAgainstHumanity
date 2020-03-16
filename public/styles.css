@@ -50,9 +50,23 @@ body {
 #blackCard p{
     margin-left: 20px;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-    font-size: 24px; font-style: normal;
+    font-size: 30px; font-style: normal;
     font-variant: normal; 
     font-weight: 700; 
     line-height: 26.4px;
     color: white;
+    line-height: normal;
+}
+#blackCard back{
+    margin-left: 20px;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 50px; font-style: normal;
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 26.4px;
+    color: white;
+    line-height: normal;
+}
+#output username{
+    color: red;
 }

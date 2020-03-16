@@ -10,6 +10,12 @@ var message = document.getElementById('message'),
     black = document.getElementById("blackCard"),
     chatBox = document.getElementById("chat");
 
+//get username
+socket.emit("username",{
+    name: prompt("Please enter your name", "anonymous")
+});
+
+
 //networking in
 socket.on("serverPrivate",function(data){
     serverInfo.innerHTML= "<p>"+"Server"+": "+data+"</p>";
@@ -18,9 +24,7 @@ socket.on("serverPublic",function(data){
     output.innerHTML+= "<p>"+"Server"+": "+data+"</p>";
 });
 socket.on("chat",function(data){
-    output.innerHTML+= "<p>"+data.message+"</p>";
-    output.scrollTop = output.scrollHeight
-    chatBox.scrollTop = chatBox.scrollHeight
+    output.innerHTML+= "<p><username>["+data.name+"]: </username>"+data.message+"</p>";
 });
 socket.on("deal",function(data){
     whites.innerHTML= "";
