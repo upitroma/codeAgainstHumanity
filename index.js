@@ -75,7 +75,7 @@ io.on("connection",function(socket){
     socket.on("chat",function(data){
         //send message
         io.sockets.emit("chat",{
-            message: scrub(data.message),
+            message: scrub(data.message,socket.id),
             name: playerLookup[socket.id].name
         })
     });
@@ -89,12 +89,13 @@ io.on("connection",function(socket){
 
     //get player name
     socket.on('username',function(data){
-        if(data.name==""){
-            playerLookup[socket.id].name="anonymous"
+        if(data.name==""||data.name=="anonymous"){
+            playerLookup[socket.id].name="anonymous"+socket.id
         }
         else{
-            playerLookup[socket.id].name=scrub(data.name)
+            playerLookup[socket.id].name=scrub(data.name,socket.id)
         }
+        io.sockets.emit("serverPublic", "<username>"+playerLookup[socket.id].name +"</username> has joined the game! Current active sockets: "+getTotalActiveSockets())
     })
 });
 
@@ -137,11 +138,11 @@ function lengthInUtf8Bytes(str) {
 function prank(){
     return randomChoice(["i prefer apple music","i hate star wars","i like mayonnaise more then ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water"])
 }
-function scrub(s){
+function scrub(s,id){
     //TODO: check for spamming
 
     if(!s||s.length===0){
-        s="anonymous"
+        s="anonymous"+id
     }
 
     //check for DOS attack and injections
