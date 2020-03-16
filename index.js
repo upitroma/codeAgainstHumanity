@@ -40,7 +40,6 @@ for (let i = 0; i < blackCards.length; i++) {
     blackCards[r]=temp
 }
 
-
 class Player{
     constructor(socketId){
         this.name = "anonymous"
@@ -51,10 +50,21 @@ class Player{
     }
 }
 
-//useful source for socket commands
-//https://gist.github.com/alexpchin/3f257d0bb813e2c8c476
+//gamestate
+var currentGameState="choosing"
+var GameTimer=consts.choosingTimer
+function gameState(){
+    io.sockets.emit("timer",GameTimer--)
+}
+setInterval(gameState, 1000);
 
-//networking protocols
+
+
+/*
+    networking protocols
+    useful source for socket commands
+    https://gist.github.com/alexpchin/3f257d0bb813e2c8c476
+*/
 io.on("connection",function(socket){
     //remember new connection
     socket.id=clientId++
@@ -98,8 +108,6 @@ io.on("connection",function(socket){
         io.sockets.emit("serverPublic", "<username>"+playerLookup[socket.id].name +"</username> has joined the game! Current active sockets: "+getTotalActiveSockets())
     })
 });
-
-
 
 
 //gets the ip of the server (for convenience, not critical)

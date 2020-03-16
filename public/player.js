@@ -8,11 +8,15 @@ var message = document.getElementById('message'),
     serverInfo = document.getElementById("serverInfo"),
     whites = document.getElementById("whiteCards"),
     black = document.getElementById("blackCard"),
+    timer = document.getElementById("timer"),
     chatBox = document.getElementById("chat");
 
 //get username
 socket.emit("username",{
-    name: prompt("Please enter your name", "anonymous")
+    //FIXME: uncomment this
+    //TODO: uncomment this
+    //name: prompt("Please enter your name", "anonymous")
+    name: "test"
 });
 
 
@@ -34,6 +38,9 @@ socket.on("deal",function(data){
 })
 socket.on("newBlack",function(data){
     black.innerHTML="<p>"+data+"</p>"
+})
+socket.on("timer",function(data){
+    timer.innerHTML="<p>"+data+"</p>"
 })
 
 //networking out

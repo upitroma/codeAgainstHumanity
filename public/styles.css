@@ -43,7 +43,7 @@ body {
     height: 400px;
     width: 300px;
     position: fixed;
-    top: 0;
+    top: 10;
     left: 40%;
     background-color: black;
 }
@@ -69,4 +69,45 @@ body {
 }
 #output username{
     color: red;
+}
+#gamestate{
+    height: 100px;
+    width: 300px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgb(255, 255, 255);
+}
+#gamestate p{
+    margin-left: 10px;
+    margin-top: 30px;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 30px; 
+    font-style: normal;
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: normal;
+    color: rgb(0, 0, 0);
+    line-height: normal;
+}
+#timer{
+    height: 100px;
+    width: 100px;
+    position: fixed;
+    top: 110px;
+    left: 10px;
+    background-color: rgb(54, 54, 54);
+    border-radius: 50%
+}
+#timer p{
+    text-align: center;
+    margin-top: 25px;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 40px; 
+    font-style: normal;
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: normal;
+    color: white;
+    line-height: normal;
 }
