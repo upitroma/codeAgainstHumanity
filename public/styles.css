@@ -33,11 +33,40 @@ body {
     color: #00ff03;
     background: rgb(33, 34, 37);
 }
+#whiteCards{
+    position: absolute;
+    bottom: 0px;
+    height: 400px;
+    max-height: 400px;
+    padding: 10px 15px;
+    width: 80%;
+    display: flex;
+    flex-flow: row;
+    
+}
 #whiteCards button{
     position: relative;
-    top: 500px;
+    top: 0;
     height: 400px;
+    max-height: 400px;
     width: 300px;
+    display: flex;
+    flex-flow: column;
+}
+#whiteCards div{
+    flex: 1;
+    text-align: left;
+    flex-direction:column;
+    position: relative;
+    top:20px;
+    margin-left: 10px;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 30px; font-style: normal;
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 26.4px;
+    color: rgb(0, 0, 0);
+    line-height: normal;
 }
 #blackCard{
     height: 400px;

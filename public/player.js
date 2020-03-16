@@ -34,7 +34,7 @@ socket.on("chat",function(data){
 socket.on("deal",function(data){
     whites.innerHTML= "";
     for(i=0; i<data.length;i++){
-        whites.innerHTML+= "<button>"+data[i]+"</button>";
+        whites.innerHTML+= "<button><div>"+data[i]+"</div></button>";
     }
 })
 socket.on("newBlack",function(data){
