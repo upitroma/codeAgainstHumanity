@@ -1,5 +1,7 @@
 var express = require("express")
 var socket = require("socket.io")
+var whiteCards=require('./WhiteCards').cards
+var consts=require('./const').constants
 
 //app setup
 var app = express();
@@ -16,6 +18,19 @@ var clientId=0
 var socketLookup=[]
 var isActiveLookup=[]
 
+//keeping track of cards
+whiteIndex=0
+
+class Player{
+    constructor(socketId){
+        this.name = "anonymous"
+        this.socketId=socketId
+        this.isActive=true
+        this.blacks=[]
+        this.whites=generateHand()
+    }
+}
+
 //useful source for socket commands
 //https://gist.github.com/alexpchin/3f257d0bb813e2c8c476
 
@@ -31,7 +46,7 @@ io.on("connection",function(socket){
     console.log("client connected on socket: ",socket.id +" Current active sockets: "+getTotalActiveSockets())
     io.sockets.emit("serverPublic","new connection on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
 
-
+    //relay chat
     socket.on("chat",function(data){
         //send message
         io.sockets.emit("chat",{
@@ -39,6 +54,7 @@ io.on("connection",function(socket){
         })
     });
 
+    //keep track of players
     socket.on('disconnect', function(){
         console.info('user disconnected from socket: ' + socket.id+" Current active sockets: "+getTotalActiveSockets());
         isActiveLookup[socket.id]=false
@@ -83,8 +99,8 @@ function lengthInUtf8Bytes(str) {
 
 //pranks users that try to hack
 function prankMsg(){
-    pranks=["i prefer apple music","i hate star wars","i like mayonnaise more then ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water"]
-    return pranks[Math.floor(Math.random() * pranks.length)];
+    return randomChoice(["i prefer apple music","i hate star wars","i like mayonnaise more then ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water"])
+   
 }
 function scrub(s){
     //TODO: check for spamming
@@ -97,4 +113,23 @@ function scrub(s){
     }
     s=s.split("<").join("&lt;").split(">").join("&gt;")
     return s
+}
+function randomChoice(arr){
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+//game functions
+function getWhiteCard(){
+    if(whiteIndex>=whiteCards.length){
+        whiteIndex=0
+    }
+    else{
+        whiteIndex++
+    }
+    return whiteCards[whiteIndex]
+}
+function generateHand(){
+    for (i = 0; i < consts.cardsPerHand; i++) {
+        tempCards=whiteCards[i]
+    }
 }
