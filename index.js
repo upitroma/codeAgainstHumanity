@@ -1,6 +1,7 @@
 var express = require("express")
 var socket = require("socket.io")
 var whiteCards=require('./WhiteCards').cards
+var blackCards=require('./BlackCards').cards
 var consts=require('./const').constants
 
 //app setup
