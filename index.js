@@ -72,7 +72,6 @@ function gameState(){
         GameTimer=consts.newRoundTimer
         currentBlackCard=getBlackCard()
         io.sockets.emit("newBlack",currentBlackCard)
-        console.log("black card index: "+blackIndex)
     }
     else if(GameTimer<=0&&gamestate==consts.strNewRound){
         gamestate=consts.strChooseCard

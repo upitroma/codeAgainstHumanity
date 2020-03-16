@@ -8,7 +8,7 @@ var constants = {
     strNewRound: "Next Round",
     strVoteCard: "Vote for your favorite",
     strResults: "Round Results",
-    outOfCards: "I'm all out of cards. Feel free to make your own and send them to me. I'll try to add them in.",
+    outOfCards: "I'm all out of cards. Feel free to make your own and send them to me. I'll try to add them in. Just burn a card or something.",
 }
 
 exports.constants=constants;
