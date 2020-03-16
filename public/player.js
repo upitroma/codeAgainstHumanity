@@ -21,9 +21,20 @@ socket.emit("username",{
 });
 
 var myWhiteCards=[]
+var myChosenWhiteCard=-1
 
 function whiteClick(i){
-    console.log("button: "+i+" was clicked")
+    myChosenWhiteCard=i
+    whites.innerHTML= "";
+    //TODO: submit card
+    for(let c=0; c<myWhiteCards.length;c++){
+        if(c==i){
+            whites.innerHTML+= "<button><div>"+myWhiteCards[c]+"</div></button>";
+        }
+        else{
+            whites.innerHTML+= "<button><div>"+"waiting for timer"+"</div></button>";
+        }
+    }
 }
 
 //networking in
@@ -41,7 +52,7 @@ socket.on("deal",function(data){
     whites.innerHTML= "";
     for(i=0; i<data.length;i++){
         whites.innerHTML+= "<button onClick=whiteClick("+i+")><div>"+data[i]+"</div></button>";
-        myWhiteCards+=data[i]
+        myWhiteCards.push(data[i])
     }
 })
 socket.on("newBlack",function(data){

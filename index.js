@@ -110,11 +110,14 @@ io.on("connection",function(socket){
 
     //relay chat
     socket.on("chat",function(data){
-        //send message
-        io.sockets.emit("chat",{
-            message: scrub(data.message,socket.id),
-            name: playerLookup[socket.id].name
-        })
+        m=data.message
+        if(!(!m || m.length===0)){
+            //send message
+            io.sockets.emit("chat",{
+                message: scrub(m,socket.id),
+                name: playerLookup[socket.id].name
+            })
+        }
     });
 
     //keep track of players

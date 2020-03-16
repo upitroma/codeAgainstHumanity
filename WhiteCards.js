@@ -1,4 +1,4 @@
-var cards = [
+var cards = [ 
     "Cockfights",
     "Friendly fire",
     "A sausage festival",
