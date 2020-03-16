@@ -72,7 +72,7 @@ body {
 }
 #gamestate{
     height: 100px;
-    width: 300px;
+    width: 400px;
     position: fixed;
     top: 0;
     left: 0;
@@ -90,6 +90,16 @@ body {
     color: rgb(0, 0, 0);
     line-height: normal;
 }
+#triangleTL{
+    width: 0;
+    height: 0;
+    position: fixed;
+    top: 0;
+    left: 400px;
+    border-top: 100px solid rgb(255, 255, 255);
+    border-right: 100px solid transparent;
+}
+
 #timer{
     height: 100px;
     width: 100px;
