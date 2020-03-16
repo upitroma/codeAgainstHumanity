@@ -22,6 +22,14 @@ var playerLookup=[]
 //keeping track of cards
 whiteIndex=0
 
+//shuffle white cards
+for (let i = 0; i < whiteCards.length; i++) {
+    let r = Math.floor(Math.random() * (i));
+    temp = whiteCards[i]
+    whiteCards[i]=whiteCards[r]
+    whiteCards[r]=temp
+}
+
 class Player{
     constructor(socketId){
         this.name = "anonymous"
@@ -135,7 +143,11 @@ function getWhiteCard(){
 function generateHand(){
     let tempCards=[]
     for (i = 0; i < consts.cardsPerHand; i++) {
-        tempCards.push(whiteCards[i])
+        if(whiteIndex>=whiteCards.length){
+            whiteIndex=0
+        }
+        tempCards.push(whiteCards[whiteIndex])
+        whiteIndex++
     }
     return tempCards
 }
