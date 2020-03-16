@@ -22,7 +22,10 @@ socket.on("chat",function(data){
     chatBox.scrollTop = chatBox.scrollHeight
 });
 socket.on("deal",function(data){
-    whites.innerHTML= "<p>"+data+"</p>";
+    whites.innerHTML= "";
+    for(i=0; i<data.length;i++){
+        whites.innerHTML+= "<button>"+data[i]+"</button>";
+    }
 })
 
 //networking out

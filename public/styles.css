@@ -33,3 +33,26 @@ body {
     color: #00ff03;
     background: rgb(33, 34, 37);
 }
+#whiteCards button{
+    position: relative;
+    top: 400px;
+    height: 400px;
+    width: 300px;
+}
+#blackCard{
+    height: 400px;
+    width: 300px;
+    position: fixed;
+    top: 0;
+    left: 40%;
+    background-color: black;
+}
+#blackCard p{
+    margin-left: 20px;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 24px; font-style: normal;
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 26.4px;
+    color: white;
+}

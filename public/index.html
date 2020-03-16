@@ -10,20 +10,26 @@
         <link href="/styles.css" rel="stylesheet" />
     </head>
     <body>
-        <div id="blackCard">
-            black
+        <div>
+            <div id="game" style="float: left; bottom: 0">
+                <div id="blackCard">
+                    <p>What was one of the rejected flavors for Bertie Bott's Every Flavour Beans?</p>
+                </div>
+                <div id="whiteCards" >
+                    
+                </div>
+            </div>
+            <div id="chat" style="float: right">
+                <div id="chat-window">
+                    <div id="output"></div>
+                </div>
+                <input id="message" type="text" placeholder="Chat"/>
+                <button id="send">Send</button>
+            </div>
         </div>
-        <div id="whiteCards">
-            white test
-        </div>
+
     </body>
-    <div id="chat">
-        <div id="chat-window">
-            <div id="output"></div>
-        </div>
-        <input id="message" type="text" placeholder="Chat"/>
-        <button id="send">Send</button>
-    </div>
+    
     <div class="bottomright" id="serverInfo">You are not connected to the server. This makes things difficult.</div>
     <script src="/player.js"></script>
 </html>
