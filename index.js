@@ -17,6 +17,7 @@ var io = socket(server)
 var clientId=0
 var socketLookup=[]
 var isActiveLookup=[]
+var playerLookup=[]
 
 //keeping track of cards
 whiteIndex=0
@@ -40,11 +41,14 @@ io.on("connection",function(socket){
     socket.id=clientId++
     socketLookup[socket.id]=socket
     isActiveLookup[socket.id]=true
-
+    playerLookup[socket.id] = new Player(socket.id)
     //tell everyone
     socketLookup[socket.id].emit("serverPrivate","connected to server on socket: "+socket.id)
     console.log("client connected on socket: ",socket.id +" Current active sockets: "+getTotalActiveSockets())
     io.sockets.emit("serverPublic","new connection on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
+    //deal cards
+    socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
+    console.log(playerLookup[socket.id].whites)
 
     //relay chat
     socket.on("chat",function(data){
@@ -129,7 +133,9 @@ function getWhiteCard(){
     return whiteCards[whiteIndex]
 }
 function generateHand(){
+    let tempCards=[]
     for (i = 0; i < consts.cardsPerHand; i++) {
-        tempCards=whiteCards[i]
+        tempCards.push(whiteCards[i])
     }
+    return tempCards
 }

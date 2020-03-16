@@ -6,6 +6,7 @@ var message = document.getElementById('message'),
     btn = document.getElementById('send'),
     output = document.getElementById('output'),
     serverInfo = document.getElementById("serverInfo"),
+    whites = document.getElementById("whiteCards"),
     chatBox = document.getElementById("chat");
 
 //networking in
@@ -20,6 +21,9 @@ socket.on("chat",function(data){
     output.scrollTop = output.scrollHeight
     chatBox.scrollTop = chatBox.scrollHeight
 });
+socket.on("deal",function(data){
+    whites.innerHTML= "<p>"+data+"</p>";
+})
 
 //networking out
 btn.addEventListener("click",function(){
