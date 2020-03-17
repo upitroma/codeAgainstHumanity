@@ -1,6 +1,9 @@
 # codeAgainstHumanity
 a cards against humanity clone in node.js
 
+# disclaimer
+this is probably not family friendly
+
 # to run
 1. make sure you have node.js
 2. run node index.js
