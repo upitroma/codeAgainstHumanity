@@ -19,5 +19,7 @@ var cards = [
     "Getting naked and watching Jimmy Neutron"
 ];
 
+
+
 //send to game
 exports.cards=cards;

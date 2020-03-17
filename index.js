@@ -1,8 +1,52 @@
 var express = require("express")
 var socket = require("socket.io")
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var whiteCards=require('./WhiteCards').cards
 var blackCards=require('./BlackCards').cards
 var consts=require('./const').constants
+
+
+//get whites
+HttpClientGet('https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity/master/answers.txt', function(response) {
+    whiteCards = response.split("\n")
+
+    
+
+    //shuffle white cards
+    for (let i = 0; i < whiteCards.length; i++) {
+        let r = Math.floor(Math.random() * (i));
+        temp = whiteCards[i]
+        whiteCards[i]=whiteCards[r]
+        whiteCards[r]=temp
+    }
+});
+//get blacks
+HttpClientGet('https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity/master/questions.txt', function(response) {
+    blackCards = response.split("\n")
+
+    //only single blanks
+    for(let i=0;i<whiteCards.length;i++){
+
+        let count = 0;
+        for(let j = 0; j < blackCards[i].length; ++j){
+            if(blackCards[i][j] == "_"){
+                count++;
+            }
+        }
+
+        if(count>1){
+            blackCards.splice(i,1)
+        }
+    }
+
+    //shuffle black cards
+    for (let i = 0; i < blackCards.length; i++) {
+        let r = Math.floor(Math.random() * (i));
+        temp = blackCards[i]
+        blackCards[i]=blackCards[r]
+        blackCards[r]=temp
+    }
+});
 
 //app setup
 var app = express();
@@ -371,4 +415,16 @@ function generateHand(){
         whiteIndex++
     }
     return tempCards
+}
+
+//for getting cards off the internet
+function HttpClientGet(aUrl, aCallback) {
+    var anHttpRequest = new XMLHttpRequest();
+    anHttpRequest.onreadystatechange = function() { 
+        if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+            aCallback(anHttpRequest.responseText);
+    }
+
+    anHttpRequest.open( "GET", aUrl, true );            
+    anHttpRequest.send( null );
 }
