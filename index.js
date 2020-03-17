@@ -48,9 +48,11 @@ class Player{
     constructor(socketId){
         this.name = "anonymous"
         this.socketId=socketId
+        this.hackerSuspicion=0
         this.isActive=true
         this.blacks=[]
         this.whites=generateHand()
+        this.currentWhiteCard=""
     }
 }
 
@@ -136,6 +138,13 @@ io.on("connection",function(socket){
         }
         io.sockets.emit("serverPublic", "<username>"+playerLookup[socket.id].name +"</username> has joined the game! Current active sockets: "+getTotalActiveSockets())
     })
+
+    //get player's white card
+    socket.on("playCard",function(data){
+        //check for dos/injection
+        let card = scrub(data,socket.id)
+        //TODO: if(playerLookup[socket.id].whiteCards)
+    })
 });
 
 
@@ -173,7 +182,7 @@ function lengthInUtf8Bytes(str) {
 
 //pranks users that try to hack
 function prank(){
-    return randomChoice(["i prefer apple music","i hate star wars","i like mayonnaise more then ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water"])
+    return randomChoice(["i prefer apple music","i hate star wars","i like mayonnaise more then ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water","i think im addicted to barbie","my new role model https://www.youtube.com/watch?v=cO8SA_miz2c"])
 }
 function scrub(s,id){
     //TODO: check for spamming
@@ -182,12 +191,36 @@ function scrub(s,id){
         s="anonymous"+id
     }
 
-    //check for DOS attack and injections
-    if(lengthInUtf8Bytes(s)>200||s.includes("<")&&s.includes(">")){
+    //check for DOS attack
+    if(lengthInUtf8Bytes(s)>200){
 
         //replace their message with something funny
         s=prank()
+
+        //mark them as very suspicious
+        playerLookup[id].hackerSuspicion+=3
+        console.log(playerLookup[id].name+" marked as suspicious. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
     }
+
+    //check for injections
+    else if(s.includes("<")&&s.includes(">")){
+
+        //replace their message with something funny
+        s=prank()
+
+        //mark them as suspicious
+        playerLookup[id].hackerSuspicion++
+        console.log(playerLookup[id].name+" marked as suspicious. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
+
+        
+    }
+
+    //kick if too suspicious
+    if(playerLookup[id].hackerSuspicion>=consts.hackerSuspicionThreshold){
+        socketLookup[id].disconnect()
+    }
+
+    //remove pesky html charactors
     s=s.split("<").join("&lt;").split(">").join("&gt;")
     return s
 }

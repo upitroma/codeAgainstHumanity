@@ -1,9 +1,13 @@
 var constants = {
+
+    hackerSuspicionThreshold: 10,
+
     cardsPerHand: 5,
     choosingTimer:10,
     voteingTimer:10,
     resultsTimer:5,
     newRoundTimer:5,
+
     strChooseCard: "Choose a card",
     strNewRound: "Next Round",
     strVoteCard: "Vote for your favorite",
