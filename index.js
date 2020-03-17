@@ -61,20 +61,31 @@ var gamestate=consts.strChooseCard
 var GameTimer=consts.choosingTimer
 function gameState(){
 
+    //start of vote
     if(GameTimer<=0&&gamestate==consts.strChooseCard){
         gamestate=consts.strVoteCard
         GameTimer=consts.voteingTimer
     }
+    //end of vote
     else if(GameTimer<=0&&gamestate==consts.strVoteCard){
         gamestate=consts.strResults
         GameTimer=consts.resultsTimer
     }
+    //start of new round
     else if(GameTimer<=0&&gamestate==consts.strResults){
         gamestate=consts.strNewRound
         GameTimer=consts.newRoundTimer
         currentBlackCard=getBlackCard()
+        //deal new cards
         io.sockets.emit("newBlack",currentBlackCard)
+
+        for(let i=0;i<playerLookup.length;i++){
+            if(isActiveLookup[i]&&playerLookup[i].isActive){
+                socketLookup[i].emit("deal",playerLookup[i].whites)
+            }
+        }
     }
+    //choose your card
     else if(GameTimer<=0&&gamestate==consts.strNewRound){
         gamestate=consts.strChooseCard
         GameTimer=consts.choosingTimer
@@ -125,6 +136,7 @@ io.on("connection",function(socket){
     socket.on('disconnect', function(){
         console.info('user disconnected from socket: ' + socket.id+" Current active sockets: "+getTotalActiveSockets());
         isActiveLookup[socket.id]=false
+        playerLookup[socket.id].isActive=false
         io.sockets.emit("serverPublic","user disconnected on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
     });
 
@@ -141,9 +153,10 @@ io.on("connection",function(socket){
 
     //get player's white card
     socket.on("playCard",function(data){
-        //check for dos/injection
-        let card = scrub(data,socket.id)
-        //TODO: if(playerLookup[socket.id].whiteCards)
+        let card = playerLookup[socket.id].whites[data]
+        //TODO: keep track of who played what card
+        console.log(card)
+        playerLookup[socket.id].whites[data]=getWhiteCard()
     })
 });
 

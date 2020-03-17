@@ -20,9 +20,9 @@ socket.emit("username",{
     name: "test"
 });
 
+//get white card selection
 var myWhiteCards=[]
 var myChosenWhiteCard=-1
-
 function whiteClick(i){
     myChosenWhiteCard=i
     whites.innerHTML= "";
@@ -35,6 +35,8 @@ function whiteClick(i){
             whites.innerHTML+= "<button><div>"+"waiting for timer"+"</div></button>";
         }
     }
+    socket.emit("playCard",i)
+    console.log(i)
 }
 
 //networking in
@@ -66,6 +68,9 @@ socket.on("gamestate",function(data){
 })
 
 //networking out
+
+
+
 btn.addEventListener("click",function(){
     socket.emit("chat",{
         message: message.value
