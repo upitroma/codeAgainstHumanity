@@ -155,7 +155,6 @@ io.on("connection",function(socket){
     socket.on("playCard",function(data){
         let card = playerLookup[socket.id].whites[data]
         //TODO: keep track of who played what card
-        console.log(card)
         playerLookup[socket.id].whites[data]=getWhiteCard()
     })
 });
@@ -205,32 +204,39 @@ function scrub(s,id){
     }
 
     //check for DOS attack
-    if(lengthInUtf8Bytes(s)>200){
+    if(lengthInUtf8Bytes(s)>consts.maxByteSize){
+
+        if(lengthInUtf8Bytes(s)>1024){
+            //just ban them
+            socketLookup[id].disconnect()
+            console.log(playerLookup[id].name+" banned for sending over 1024 bytes of data at once.")
+        }
 
         //replace their message with something funny
         s=prank()
-
-        //mark them as very suspicious
+        //mark them as suspicious
         playerLookup[id].hackerSuspicion+=3
-        console.log(playerLookup[id].name+" marked as suspicious. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
+        console.log(playerLookup[id].name+" marked as suspicious for sending too much data at once. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
     }
 
     //check for injections
     else if(s.includes("<")&&s.includes(">")){
 
-        //replace their message with something funny
-        s=prank()
+        //if repeated offence
+        if(playerLookup[id].hackerSuspicion>=3){
+            //replace their message with something funny
+            s=prank()
+        }
 
         //mark them as suspicious
         playerLookup[id].hackerSuspicion++
-        console.log(playerLookup[id].name+" marked as suspicious. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
-
-        
+        console.log(playerLookup[id].name+" marked as suspicious for using html charactors. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
     }
 
     //kick if too suspicious
     if(playerLookup[id].hackerSuspicion>=consts.hackerSuspicionThreshold){
         socketLookup[id].disconnect()
+        console.log(playerLookup[id].name+" banned for repeated infractions")
     }
 
     //remove pesky html charactors
