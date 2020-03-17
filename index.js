@@ -76,9 +76,9 @@ function gameState(){
         gamestate=consts.strNewRound
         GameTimer=consts.newRoundTimer
         currentBlackCard=getBlackCard()
-        //deal new cards
+        //deal new black card
         io.sockets.emit("newBlack",currentBlackCard)
-
+        //deal white cards
         for(let i=0;i<playerLookup.length;i++){
             if(isActiveLookup[i]&&playerLookup[i].isActive){
                 socketLookup[i].emit("deal",playerLookup[i].whites)

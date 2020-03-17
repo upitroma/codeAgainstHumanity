@@ -32,7 +32,7 @@ function whiteClick(i){
             whites.innerHTML+= "<button><div>"+myWhiteCards[c]+"</div></button>";
         }
         else{
-            whites.innerHTML+= "<button><div>"+"waiting for timer"+"</div></button>";
+            whites.innerHTML+= "<shortCards><div>"+myWhiteCards[c]+"</shortCards></div>";
         }
     }
     socket.emit("playCard",i)

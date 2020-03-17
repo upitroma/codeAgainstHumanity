@@ -53,6 +53,33 @@ body {
     display: flex;
     flex-flow: column;
 }
+#whiteCards shortCards{
+    position: relative;
+    top: 100px;
+    height: 300px;
+    max-height: 400px;
+    width: 300px;
+    display: flex;
+    flex-flow: column;
+    background-color: rgb(168, 168, 168);
+    border: 1px solid rgb(33, 34, 37);
+}
+#whiteCards shortCards div{
+    flex: 1;
+    text-align: left;
+    flex-direction:column;
+    position: relative;
+    top:20px;
+    margin-left: 10px;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 30px;
+    font-style: normal;
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 26.4px;
+    color: rgb(0, 0, 0);
+    line-height: normal;
+}
 #whiteCards div{
     flex: 1;
     text-align: left;
