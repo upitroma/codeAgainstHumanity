@@ -81,8 +81,26 @@ function gameState(){
     }
     //end of vote
     else if(GameTimer<=0&&gamestate==consts.strVoteCard){
-        let winner = cardsPlayedThisRound[findWinner(votes)]
-        console.log(winner)
+
+        if(cardsPlayedThisRound.length==0){
+            //sad
+            console.log("no players this round")
+        }
+        else{
+            let winningCard = cardsPlayedThisRound[findWinner(votes)]
+            let winningPlayer = "unknown (Did the player leave or something? This shouldn't've happened.)"
+    
+            for(let i=0;i<playerLookup.length;i++){
+                if(isActiveLookup[i]&&playerLookup[i].isActive){
+                    if(playerLookup[i].currentWhiteCard==winningCard){
+                        winningPlayer=playerLookup[i].name
+                    }
+                }
+            }
+
+            console.log(winningCard+" "+winningPlayer)
+        }
+        
 
         //TODO: send results and award winner
 
@@ -193,6 +211,7 @@ io.on("connection",function(socket){
     socket.on("vote",function(data){
         if(!playerLookup[socket.id].hasVotedThisRound){
             votes.push(data)
+            playerLookup[socket.id].hasVotedThisRound=true
         }
         else{
             //player is trying to vote more than once and is probably cheeting

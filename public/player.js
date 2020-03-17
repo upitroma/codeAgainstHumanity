@@ -16,8 +16,8 @@ var message = document.getElementById('message'),
 socket.emit("username",{
     //FIXME: uncomment this
     //TODO: uncomment this
-    //name: prompt("Please enter your name", "anonymous")
-    name: "test"
+    name: prompt("Please enter your name", "anonymous")
+    //name: "test"
 });
 
 //get white card selection
