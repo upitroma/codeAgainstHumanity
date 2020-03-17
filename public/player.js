@@ -68,8 +68,14 @@ socket.on("timer",function(data){
 socket.on("gamestate",function(data){
     gamestate.innerHTML="<p>"+data+"</p>"
 })
+socket.on("submissions",function(data){
+    whites.innerHTML= "";
+    console.log(whites.innerHTML)
+    for(i=0; i<data.length;i++){
+        whites.innerHTML+= "<button onClick=whiteClick("+i+")><div>"+data[i]+"</div></button>";
+    }
+})
 
-//networking out
 
 
 

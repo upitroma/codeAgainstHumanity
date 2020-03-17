@@ -66,6 +66,13 @@ function gameState(){
     if(GameTimer<=0&&gamestate==consts.strChooseCard){
         gamestate=consts.strVoteCard
         GameTimer=consts.voteingTimer
+        //show submissions
+        for(let i=0;i<playerLookup.length;i++){
+            if(isActiveLookup[i]&&playerLookup[i].isActive){
+                socketLookup[i].emit("submissions",cardsPlayedThisRound)
+                console.log(cardsPlayedThisRound)//FIXME: console.log should not be in a for loop at runtime
+            }
+        }
     }
     //end of vote
     else if(GameTimer<=0&&gamestate==consts.strVoteCard){
@@ -159,6 +166,8 @@ io.on("connection",function(socket){
         if(playerLookup[socket.id].currentWhiteCard==""){
             let card = playerLookup[socket.id].whites[data]
             playerLookup[socket.id].currentWhiteCard=card
+
+            cardsPlayedThisRound.push(card)
             
             //deal a new white card to the player
             playerLookup[socket.id].whites[data]=getWhiteCard()
