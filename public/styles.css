@@ -6,7 +6,7 @@
     color: rgb(0, 195, 0);
 }
 #chat{
-    position: absolute;
+    position: fixed;
     max-width: 300px;
     right: 0;
     margin: 30px auto;
@@ -70,7 +70,7 @@ body {
     text-align: left;
     flex-direction:column;
     position: relative;
-    top:20px;
+    top: 50px;
     margin-left: 10px;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     font-size: 30px;
