@@ -25,7 +25,7 @@ HttpClientGet('https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity
     blackCards = response.split("\n")
 
     //only single blanks
-    for(let i=0;i<whiteCards.length;i++){
+    for(let i=0;i<blackCards.length;i++){
 
         let count = 0;
         for(let j = 0; j < blackCards[i].length; ++j){
@@ -35,6 +35,7 @@ HttpClientGet('https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity
         }
 
         if(count>1){
+            console.log(blackCards[i])
             blackCards.splice(i,1)
         }
     }
