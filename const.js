@@ -3,7 +3,7 @@ var constants = {
     hackerSuspicionThreshold: 10,
     maxByteSize: 200,
 
-    cardsPerHand: 5,
+    cardsPerHand: 12,
     choosingTimer:10,
     voteingTimer:10,
     resultsTimer:5,

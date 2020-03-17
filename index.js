@@ -99,7 +99,6 @@ function gameState(){
 setInterval(gameState, 1000);
 
 
-
 /*
     networking protocols
     useful source for socket commands
