@@ -3,8 +3,8 @@ a cards against humanity clone in node.js
 
 # to run
 1. make sure you have node.js
-2. 
-run node index.js<br>
+2. run node index.js
+
 or<br>
 drag index.js onto node.exe
 
