@@ -85,6 +85,12 @@ function gameState(){
         if(cardsPlayedThisRound.length==0){
             //sad
             console.log("no players this round")
+
+            //tell everyone
+            io.sockets.emit("results",{
+                winningCard: "no players this round",
+                winningPlayer: ":("
+            })
         }
         else{
             let winningCard = cardsPlayedThisRound[findWinner(votes)]
@@ -97,6 +103,12 @@ function gameState(){
                     }
                 }
             }
+
+            //tell everyone
+            io.sockets.emit("results",{
+                winningCard: winningCard,
+                winningPlayer: winningPlayer
+            })
 
             console.log(winningCard+" "+winningPlayer)
         }

@@ -84,13 +84,21 @@ socket.on("gamestate",function(data){
 socket.on("submissions",function(data){
     whites.innerHTML= "";
     myWhiteCards=[]
-    console.log(whites.innerHTML)
     for(i=0; i<data.length;i++){
         whites.innerHTML+= "<button onClick=whiteClick("+i+")><div>"+data[i]+"</div></button>";
         myWhiteCards.push(data[i])
     }
 })
+socket.on("results",function(data){
 
+    console.log("winner was sent")
+    
+    whites.innerHTML= "";
+
+    whites.innerHTML+= "<button onClick=whiteClick("+i+")><div>"+data.winningCard+"<br>Played by: "+data.winningPlayer+"</div></button>";
+    
+    
+})
 
 
 
