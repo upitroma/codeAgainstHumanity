@@ -49,6 +49,7 @@ class Player{
         this.name = "anonymous"
         this.socketId=id
         this.hackerSuspicion=0
+        this.messagesLastSecond=0
         this.isActive=true
         this.blacks=[]
         this.whites=generateHand()
@@ -87,8 +88,6 @@ function gameState(){
     else if(GameTimer<=0&&gamestate==consts.strVoteCard){
 
         if(cardsPlayedThisRound.length==0){
-            //sad
-            console.log("no players this round")
 
             //tell everyone
             io.sockets.emit("results",{
@@ -114,9 +113,6 @@ function gameState(){
                 winningPlayer: winningPlayer
             })
         }
-        
-
-        //TODO: send results and award winner
 
         gamestate=consts.strResults
         GameTimer=consts.resultsTimer
@@ -141,6 +137,13 @@ function gameState(){
     else if(GameTimer<=0&&gamestate==consts.strNewRound){
         gamestate=consts.strChooseCard
         GameTimer=consts.choosingTimer
+    }
+
+    //help check for spam
+    for(let i=0;i<playerLookup.length;i++){
+        if(isActiveLookup[i]&&playerLookup[i].isActive){
+            playerLookup[i].messagesLastSecond=0
+        }
     }
 
     GameTimer--
@@ -282,7 +285,6 @@ function prank(){
     return randomChoice(["i prefer apple music","i hate star wars","i like mayonnaise more then ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water","i think im addicted to barbie","my new role model https://www.youtube.com/watch?v=cO8SA_miz2c"])
 }
 function scrub(s,id){
-    //TODO: check for spamming
 
     if(!s||s.length===0){
         s="anonymous"+id
@@ -300,7 +302,7 @@ function scrub(s,id){
         //replace their message with something funny
         s=prank()
         //mark them as suspicious
-        playerLookup[id].hackerSuspicion+=3
+        playerLookup[id].hackerSuspicion+=40
         console.log(playerLookup[id].name+" marked as suspicious for sending too much data at once. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
     }
 
@@ -314,8 +316,16 @@ function scrub(s,id){
         }
 
         //mark them as suspicious
-        playerLookup[id].hackerSuspicion++
+        playerLookup[id].hackerSuspicion+=10
         console.log(playerLookup[id].name+" marked as suspicious for using html charactors. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
+    }
+
+    //check for spamming
+    playerLookup[id].messagesLastSecond++
+    if(playerLookup[id].messagesLastSecond>consts.maxMessagesPerSecond){
+        //mark them as suspicious
+        playerLookup[id].hackerSuspicion+=5
+        console.log(playerLookup[id].name+" marked as suspicious for spamming. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
     }
 
     //kick if too suspicious

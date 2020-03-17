@@ -1,7 +1,8 @@
 var constants = {
 
-    hackerSuspicionThreshold: 10,
+    hackerSuspicionThreshold: 100,
     maxByteSize: 200,
+    maxMessagesPerSecond: 3,
 
     cardsPerHand: 6,
     choosingTimer:10,
