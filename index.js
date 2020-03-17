@@ -45,9 +45,9 @@ blackCards.push(consts.outOfCards)
 var currentBlackCard=getBlackCard()
 
 class Player{
-    constructor(socketId){
+    constructor(id){
         this.name = "anonymous"
-        this.socketId=socketId
+        this.socketId=id
         this.hackerSuspicion=0
         this.isActive=true
         this.blacks=[]
@@ -59,6 +59,7 @@ class Player{
 //gamestate
 var gamestate=consts.strChooseCard
 var GameTimer=consts.choosingTimer
+var cardsPlayedThisRound=[]
 function gameState(){
 
     //start of vote
@@ -73,6 +74,7 @@ function gameState(){
     }
     //start of new round
     else if(GameTimer<=0&&gamestate==consts.strResults){
+        cardsPlayedThisRound=[]
         gamestate=consts.strNewRound
         GameTimer=consts.newRoundTimer
         currentBlackCard=getBlackCard()
@@ -82,6 +84,7 @@ function gameState(){
         for(let i=0;i<playerLookup.length;i++){
             if(isActiveLookup[i]&&playerLookup[i].isActive){
                 socketLookup[i].emit("deal",playerLookup[i].whites)
+                playerLookup[i].currentWhiteCard=""
             }
         }
     }
@@ -152,9 +155,19 @@ io.on("connection",function(socket){
 
     //get player's white card
     socket.on("playCard",function(data){
-        let card = playerLookup[socket.id].whites[data]
-        //TODO: keep track of who played what card
-        playerLookup[socket.id].whites[data]=getWhiteCard()
+
+        if(playerLookup[socket.id].currentWhiteCard==""){
+            let card = playerLookup[socket.id].whites[data]
+            playerLookup[socket.id].currentWhiteCard=card
+            
+            //deal a new white card to the player
+            playerLookup[socket.id].whites[data]=getWhiteCard()
+        }
+        else{
+            //player is playing multiple cards and is probably cheeting
+            playerLookup[id].hackerSuspicion+=2
+            console.log(playerLookup[id].name+" marked as suspicious for playing multiple cards at once. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
+        }
     })
 });
 
