@@ -24,19 +24,21 @@ socket.emit("username",{
 var myWhiteCards=[]
 var myChosenWhiteCard=-1
 function whiteClick(i){
-    myChosenWhiteCard=i
-    whites.innerHTML= "";
-    //TODO: submit card
-    for(let c=0; c<myWhiteCards.length;c++){
-        if(c==i){
-            whites.innerHTML+= "<button><div>"+myWhiteCards[c]+"</div></button>";
+    if(gamestate.innerHTML=="<p>Choose a card</p>"){
+        myChosenWhiteCard=i
+        whites.innerHTML= "";
+        //TODO: submit card
+        for(let c=0; c<myWhiteCards.length;c++){
+            if(c==i){
+                whites.innerHTML+= "<button><div>"+myWhiteCards[c]+"</div></button>";
+            }
+            else{
+                whites.innerHTML+= "<shortCards><div>"+myWhiteCards[c]+"</shortCards></div>";
+            }
         }
-        else{
-            whites.innerHTML+= "<shortCards><div>"+myWhiteCards[c]+"</shortCards></div>";
-        }
+        socket.emit("playCard",i)
+        console.log(i)
     }
-    socket.emit("playCard",i)
-    console.log(i)
 }
 
 //networking in
