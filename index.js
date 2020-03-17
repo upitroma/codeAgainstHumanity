@@ -66,16 +66,20 @@ function gameState(){
 
     //start of vote
     if(GameTimer<=0&&gamestate==consts.strChooseCard){
-
-        //TODO: skip if no votes are submitted
-
         gamestate=consts.strVoteCard
         GameTimer=consts.voteingTimer
-        //show submissions
-        for(let i=0;i<playerLookup.length;i++){
-            if(isActiveLookup[i]&&playerLookup[i].isActive){
-                socketLookup[i].emit("submissions",cardsPlayedThisRound)
-                playerLookup[i].hasVotedThisRound=false
+
+        if(cardsPlayedThisRound.length==0){
+            //nobody played this round
+            GameTimer=1
+        }
+        else{
+            //show submissions
+            for(let i=0;i<playerLookup.length;i++){
+                if(isActiveLookup[i]&&playerLookup[i].isActive){
+                    socketLookup[i].emit("submissions",cardsPlayedThisRound)
+                    playerLookup[i].hasVotedThisRound=false
+                }
             }
         }
     }
@@ -89,7 +93,7 @@ function gameState(){
             //tell everyone
             io.sockets.emit("results",{
                 winningCard: "no players this round",
-                winningPlayer: ":("
+                winningPlayer: "nobody :("
             })
         }
         else{
@@ -109,8 +113,6 @@ function gameState(){
                 winningCard: winningCard,
                 winningPlayer: winningPlayer
             })
-
-            console.log(winningCard+" "+winningPlayer)
         }
         
 
