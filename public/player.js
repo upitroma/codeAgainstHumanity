@@ -27,7 +27,7 @@ function whiteClick(i){
     if(gamestate.innerHTML=="<p>Choose a card</p>"){
         myChosenWhiteCard=i
         whites.innerHTML= "";
-        //TODO: submit card
+
         for(let c=0; c<myWhiteCards.length;c++){
             if(c==i){
                 whites.innerHTML+= "<button><div>"+myWhiteCards[c]+"</div></button>";
@@ -37,6 +37,19 @@ function whiteClick(i){
             }
         }
         socket.emit("playCard",i)
+        console.log(i)
+    }
+    else if(gamestate.innerHTML=="<p>Vote for your favorite</p>"){
+        whites.innerHTML= "";
+        for(let c=0; c<myWhiteCards.length;c++){
+            if(c==i){
+                whites.innerHTML+= "<button><div>"+myWhiteCards[c]+"</div></button>";
+            }
+            else{
+                whites.innerHTML+= "<shortCards><div>"+myWhiteCards[c]+"</shortCards></div>";
+            }
+        }
+        socket.emit("vote",i)
         console.log(i)
     }
 }
@@ -70,9 +83,11 @@ socket.on("gamestate",function(data){
 })
 socket.on("submissions",function(data){
     whites.innerHTML= "";
+    myWhiteCards=[]
     console.log(whites.innerHTML)
     for(i=0; i<data.length;i++){
         whites.innerHTML+= "<button onClick=whiteClick("+i+")><div>"+data[i]+"</div></button>";
+        myWhiteCards.push(data[i])
     }
 })
 

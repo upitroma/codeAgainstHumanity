@@ -53,6 +53,7 @@ class Player{
         this.blacks=[]
         this.whites=generateHand()
         this.currentWhiteCard=""
+        this.hasVotedThisRound=false
     }
 }
 
@@ -60,22 +61,31 @@ class Player{
 var gamestate=consts.strChooseCard
 var GameTimer=consts.choosingTimer
 var cardsPlayedThisRound=[]
+var votes=[]
 function gameState(){
 
     //start of vote
     if(GameTimer<=0&&gamestate==consts.strChooseCard){
+
+        //TODO: skip if no votes are submitted
+
         gamestate=consts.strVoteCard
         GameTimer=consts.voteingTimer
         //show submissions
         for(let i=0;i<playerLookup.length;i++){
             if(isActiveLookup[i]&&playerLookup[i].isActive){
                 socketLookup[i].emit("submissions",cardsPlayedThisRound)
-                console.log(cardsPlayedThisRound)//FIXME: console.log should not be in a for loop at runtime
+                playerLookup[i].hasVotedThisRound=false
             }
         }
     }
     //end of vote
     else if(GameTimer<=0&&gamestate==consts.strVoteCard){
+        let winner = cardsPlayedThisRound[findWinner(votes)]
+        console.log(winner)
+
+        //TODO: send results and award winner
+
         gamestate=consts.strResults
         GameTimer=consts.resultsTimer
     }
@@ -178,8 +188,29 @@ io.on("connection",function(socket){
             console.log(playerLookup[id].name+" marked as suspicious for playing multiple cards at once. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
         }
     })
+
+    //vote
+    socket.on("vote",function(data){
+        if(!playerLookup[socket.id].hasVotedThisRound){
+            votes.push(data)
+        }
+        else{
+            //player is trying to vote more than once and is probably cheeting
+            playerLookup[id].hackerSuspicion+=2
+            console.log(playerLookup[id].name+" marked as suspicious for voting more than once. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
+        }
+    })
+
 });
 
+//method counting votes
+function findWinner(arr){
+    //https://stackoverflow.com/questions/1053843/get-the-element-with-the-highest-occurrence-in-an-array
+    return arr.sort((a,b) =>
+          arr.filter(v => v===a).length
+        - arr.filter(v => v===b).length
+    ).pop();
+}
 
 //gets the ip of the server (for convenience, not critical)
 function getIp(){
