@@ -1,11 +1,11 @@
 # codeAgainstHumanity
 a cards against humanity clone in node.js
 
+# Adding New Cards
+new cards can be added to the BlackCards.js and WhiteCards.js respectively
+
 # TODO
 * make stylesheet better/more adaptive
-* add black/white cards
-* timer
-* submit system
 * voting system
 * scoring system
 * usernames
