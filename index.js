@@ -333,7 +333,7 @@ function lengthInUtf8Bytes(str) {
 
 //pranks users that try to hack
 function prank(){
-    return randomChoice(["i prefer apple music","i hate waffles","i hate star wars","i like mayonnaise more then ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water","i think im addicted to barbie","my new role model https://www.youtube.com/watch?v=cO8SA_miz2c"])
+    return randomChoice(["i prefer apple music","i hate waffles","i hate star wars","mayonnaise is better than ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water","i think im addicted to barbie","i unironically blippi"])
 }
 function scrub(s,id){
 
