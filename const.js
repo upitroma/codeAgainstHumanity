@@ -5,10 +5,10 @@ var constants = {
     maxMessagesPerSecond: 3,
 
     cardsPerHand: 6,
-    choosingTimer:10,
-    voteingTimer:10,
+    choosingTimer:20,
+    voteingTimer:15,
     resultsTimer:5,
-    newRoundTimer:5,
+    newRoundTimer:6,
 
     strChooseCard: "Choose a card",
     strNewRound: "Next Round",
