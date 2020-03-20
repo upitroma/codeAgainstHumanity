@@ -372,7 +372,7 @@ function scrub(s,id){
     playerLookup[id].messagesLastSecond++
     if(playerLookup[id].messagesLastSecond>consts.maxMessagesPerSecond){
         //mark them as suspicious
-        playerLookup[id].hackerSuspicion+=5
+        playerLookup[id].hackerSuspicion+=consts.spammingPunish
         console.log(playerLookup[id].name+" marked as suspicious for spamming. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
     }
 

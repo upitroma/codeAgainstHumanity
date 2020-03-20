@@ -2,12 +2,13 @@ var constants = {
 
     hackerSuspicionThreshold: 100,
     maxByteSize: 200,
-    maxMessagesPerSecond: 3,
+    maxMessagesPerSecond: 1,
 
     playingMultipleCardsPunish: 20,
     voteingMoreThanOncePunish: 20,
     largeMessagePunish: 30,
     htmlInjectionPunish: 10,
+    spammingPunish:5,
 
     cardsPerHand: 6,
     choosingTimer:20,
