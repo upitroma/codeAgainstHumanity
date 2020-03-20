@@ -10,6 +10,7 @@ var message = document.getElementById('message'),
     black = document.getElementById("blackCard"),
     timer = document.getElementById("timer"),
     gamestate = document.getElementById("gamestate"),
+    redrawCards = document.getElementById("redrawCards"),
     chatBox = document.getElementById("chat");
 
 //get username
@@ -90,14 +91,8 @@ socket.on("submissions",function(data){
     }
 })
 socket.on("results",function(data){
-
-    console.log("winner was sent")
-    
     whites.innerHTML= "";
-
     whites.innerHTML+= "<button onClick=whiteClick("+i+")><div>"+data.winningCard+"<br>Played by: "+data.winningPlayer+"</div></button>";
-    
-    
 })
 
 
@@ -114,4 +109,9 @@ message.addEventListener("keyup", function(event) {
             message: message.value
         });
     }
-  }); 
+}); 
+redrawCards.addEventListener("click",function(){
+    //request redraw
+    socket.emit("redraw","")
+    console.log("redraw requested")
+})

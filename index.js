@@ -281,6 +281,13 @@ io.on("connection",function(socket){
         }
     })
 
+    //redraw
+    socket.on("redraw",function(data){
+        //TODO: cooldown
+        playerLookup[socket.id].whites=generateHand()
+        socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
+    })
+
 });
 
 //method counting votes
@@ -406,6 +413,7 @@ function getBlackCard(){
     return blackCards[blackIndex]
 }
 function generateHand(){
+    //TODO: use getWhiteCard()
     let tempCards=[]
     for (i = 0; i < consts.cardsPerHand; i++) {
         if(whiteIndex>=whiteCards.length){
