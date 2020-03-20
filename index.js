@@ -35,7 +35,6 @@ HttpClientGet('https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity
         }
 
         if(count>1){
-            console.log(blackCards[i])
             blackCards.splice(i,1)
         }
     }
