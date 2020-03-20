@@ -4,6 +4,11 @@ var constants = {
     maxByteSize: 200,
     maxMessagesPerSecond: 3,
 
+    playingMultipleCardsPunish: 20,
+    voteingMoreThanOncePunish: 20,
+    largeMessagePunish: 30,
+    htmlInjectionPunish: 10,
+
     cardsPerHand: 6,
     choosingTimer:20,
     voteingTimer:15,

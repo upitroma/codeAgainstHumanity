@@ -263,8 +263,8 @@ io.on("connection",function(socket){
         }
         else{
             //player is playing multiple cards and is probably cheeting
-            playerLookup[id].hackerSuspicion+=2
-            console.log(playerLookup[id].name+" marked as suspicious for playing multiple cards at once. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
+            playerLookup[socket.id].hackerSuspicion+=consts.playingMultipleCardsPunish
+            console.log(playerLookup[socket.id].name+" marked as suspicious for playing multiple cards at once. ["+playerLookup[socket.id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
         }
     })
 
@@ -276,8 +276,8 @@ io.on("connection",function(socket){
         }
         else{
             //player is trying to vote more than once and is probably cheeting
-            playerLookup[id].hackerSuspicion+=2
-            console.log(playerLookup[id].name+" marked as suspicious for voting more than once. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
+            playerLookup[socket.id].hackerSuspicion+=consts.voteingMoreThanOncePunish
+            console.log(playerLookup[socket.id].name+" marked as suspicious for voting more than once. ["+playerLookup[socket.id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
         }
     })
 
@@ -353,21 +353,18 @@ function scrub(s,id){
         //replace their message with something funny
         s=prank()
         //mark them as suspicious
-        playerLookup[id].hackerSuspicion+=40
+        playerLookup[id].hackerSuspicion+=consts.largeMessagePunish
         console.log(playerLookup[id].name+" marked as suspicious for sending too much data at once. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
     }
 
     //check for injections
     else if(s.includes("<")&&s.includes(">")){
 
-        //if repeated offence
-        if(playerLookup[id].hackerSuspicion>=3){
-            //replace their message with something funny
-            s=prank()
-        }
+        //replace their message with something funny
+        s=prank()
 
         //mark them as suspicious
-        playerLookup[id].hackerSuspicion+=10
+        playerLookup[id].hackerSuspicion+=consts.htmlInjectionPunish
         console.log(playerLookup[id].name+" marked as suspicious for using html charactors. ["+playerLookup[id].hackerSuspicion+"/"+consts.hackerSuspicionThreshold+"]")
     }
 

@@ -1,9 +1,10 @@
 #redrawCards {
-    position: absolute;
+    position: fixed;
     bottom: 8px;
     right: 16px;
     background-color: black;
     color: rgb(0, 195, 0);
+    font-size: 20px;
 }
 #chat{
     position: fixed;
