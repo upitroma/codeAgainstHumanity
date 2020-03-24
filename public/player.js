@@ -14,12 +14,12 @@ var message = document.getElementById('message'),
     chatBox = document.getElementById("chat");
 
 //get username
-socket.emit("username",{
+//socket.emit("username",{
     //FIXME: uncomment this
     //TODO: uncomment this
-    name: prompt("Please enter your name", "anonymous")
+    //name: prompt("Please enter your name", "anonymous")
     //name: "test"
-});
+//});
 
 //get white card selection
 var myWhiteCards=[]
@@ -56,6 +56,16 @@ function whiteClick(i){
 }
 
 //networking in
+socket.on("connected",function(data){
+    gamestate.innerHTML="<p>"+"login"+"</p>"
+    black.innerHTML="<p>"+"My login credentials for Code Against Humanity are _."+"</p>"
+    whites.innerHTML=
+    '<login><input type="text" placeholder="Username" id="usernameInput"><br>'+
+    '<input type="password" placeholder="Password" id="passwordInput"><br><br>'+
+    '<button>login</button><br>'+
+    '<button>sign up</button></login>'
+
+})
 socket.on("serverPrivate",function(data){
     serverInfo.innerHTML= "<p>"+"Server"+": "+data+"</p>";
 });

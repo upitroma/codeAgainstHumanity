@@ -61,7 +61,7 @@ var io = socket(server)
 //keeping track of active clients
 var clientId=0
 var socketLookup=[]
-var isActiveLookup=[]
+//var isActiveLookup=[]
 var playerLookup=[]
 
 //keeping track of cards
@@ -94,7 +94,8 @@ class Player{
         this.socketId=id
         this.hackerSuspicion=0
         this.messagesLastSecond=0
-        this.isActive=true
+        this.isActive=false //players are inactive untill they login
+        this.isLoggedIn=false
         this.blacks=[]
         this.whites=generateHand()
         this.currentWhiteCard=""
@@ -121,7 +122,7 @@ function gameState(){
         else{
             //show submissions
             for(let i=0;i<playerLookup.length;i++){
-                if(isActiveLookup[i]&&playerLookup[i].isActive){
+                if(playerLookup[i].isActive){
                     socketLookup[i].emit("submissions",cardsPlayedThisRound)
                     playerLookup[i].hasVotedThisRound=false
                 }
@@ -134,17 +135,22 @@ function gameState(){
         if(cardsPlayedThisRound.length==0){
 
             //tell everyone
-            io.sockets.emit("results",{
-                winningCard: "no players this round",
-                winningPlayer: "nobody :("
-            })
+            for(let i=0;i<playerLookup.length;i++){
+                if(playerLookup[i].isActive){
+                    socketLookup[i].emit("results",{
+                        winningCard: "no players this round",
+                        winningPlayer: "nobody :("
+                    })
+                }
+            }
+
         }
         else{
             let winningCard = cardsPlayedThisRound[findWinner(votes)]
             let winningPlayer = "unknown (Did the player leave or something? This shouldn't've happened.)"
     
             for(let i=0;i<playerLookup.length;i++){
-                if(isActiveLookup[i]&&playerLookup[i].isActive){
+                if(playerLookup[i].isActive){
                     if(playerLookup[i].currentWhiteCard==winningCard){
                         winningPlayer=playerLookup[i].name
                     }
@@ -152,10 +158,14 @@ function gameState(){
             }
 
             //tell everyone
-            io.sockets.emit("results",{
-                winningCard: winningCard,
-                winningPlayer: winningPlayer
-            })
+            for(let i=0;i<playerLookup.length;i++){
+                if(playerLookup[i].isActive){
+                    socketLookup[i].emit("results",{
+                        winningCard: winningCard,
+                        winningPlayer: winningPlayer
+                    })
+                }
+            }
         }
 
         gamestate=consts.strResults
@@ -167,11 +177,13 @@ function gameState(){
         gamestate=consts.strNewRound
         GameTimer=consts.newRoundTimer
         currentBlackCard=getBlackCard()
-        //deal new black card
-        io.sockets.emit("newBlack",currentBlackCard)
-        //deal white cards
+
+        //deal new cards
         for(let i=0;i<playerLookup.length;i++){
-            if(isActiveLookup[i]&&playerLookup[i].isActive){
+            if(playerLookup[i].isActive){
+                //black
+                socketLookup[i].emit("newBlack",currentBlackCard)
+                //white
                 socketLookup[i].emit("deal",playerLookup[i].whites)
                 playerLookup[i].currentWhiteCard=""
             }
@@ -185,15 +197,21 @@ function gameState(){
 
     //help check for spam
     for(let i=0;i<playerLookup.length;i++){
-        if(isActiveLookup[i]&&playerLookup[i].isActive){
+        if(playerLookup[i].isActive){
             playerLookup[i].messagesLastSecond=0
         }
     }
 
     GameTimer--
-    
-    io.sockets.emit("timer",GameTimer)
-    io.sockets.emit("gamestate",gamestate)
+
+    //tell everyone
+    for(let i=0;i<playerLookup.length;i++){
+        if(playerLookup[i].isActive){
+            socketLookup[i].emit("timer",GameTimer)
+            socketLookup[i].emit("gamestate",gamestate)
+               
+        }
+    }
 }
 setInterval(gameState, 1000);
 
@@ -207,21 +225,26 @@ io.on("connection",function(socket){
     //remember new connection
     socket.id=clientId++
     socketLookup[socket.id]=socket
-    isActiveLookup[socket.id]=true
     playerLookup[socket.id] = new Player(socket.id)
     //tell everyone else
+    socketLookup[socket.id].emit("connected","")
     socketLookup[socket.id].emit("serverPrivate","connected to server on socket: "+socket.id)
     console.log("client connected on socket: ",socket.id +" Current active sockets: "+getTotalActiveSockets())
     io.sockets.emit("serverPublic","new connection on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
-    //deal cards
-    socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
-    socketLookup[socket.id].emit("newBlack",currentBlackCard)
+
+    socket.on("login",function(data){
+        //if valid
+        //deal cards
+        socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
+        socketLookup[socket.id].emit("newBlack",currentBlackCard)
+    })
+    
 
 
     //relay chat
     socket.on("chat",function(data){
         m=data.message
-        if(!(!m || m.length===0)){
+        if((!(!m || m.length===0))&&playerLookup[socket.id].isActive){
             //send message
             io.sockets.emit("chat",{
                 message: scrub(m,socket.id),
@@ -233,7 +256,6 @@ io.on("connection",function(socket){
     //keep track of players
     socket.on('disconnect', function(){
         console.info('user disconnected from socket: ' + socket.id+" Current active sockets: "+getTotalActiveSockets());
-        isActiveLookup[socket.id]=false
         playerLookup[socket.id].isActive=false
         io.sockets.emit("serverPublic","user disconnected on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
     });
@@ -284,8 +306,10 @@ io.on("connection",function(socket){
     //redraw
     socket.on("redraw",function(data){
         //TODO: cooldown
-        playerLookup[socket.id].whites=generateHand()
-        socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
+        if(playerLookup[socket.id].isActive){
+            playerLookup[socket.id].whites=generateHand()
+            socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
+        }
     })
 
 });
@@ -318,7 +342,7 @@ function getIp(){
 function getTotalActiveSockets(){
     var total=0
     for(var i=0;i<socketLookup.length;i++){
-        if(isActiveLookup[i]){
+        if(playerLookup[i].isActive){
             total++
         }
     }
