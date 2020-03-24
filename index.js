@@ -1,9 +1,16 @@
 var express = require("express")
 var socket = require("socket.io")
+var fs = require('fs');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
 var whiteCards=require('./WhiteCards').cards
 var blackCards=require('./BlackCards').cards
 var consts=require('./const').constants
+
+//create credential file if it dosen't exist
+fs.appendFile('loginCredentials.txt', '', function (err) {
+    if (err) throw err;
+}); 
 
 
 //get whites
