@@ -13,6 +13,9 @@ var message = document.getElementById('message'),
     redrawCards = document.getElementById("redrawCards"),
     chatBox = document.getElementById("chat");
 
+
+
+
 //get username
 //socket.emit("username",{
     //FIXME: uncomment this
@@ -20,6 +23,37 @@ var message = document.getElementById('message'),
     //name: prompt("Please enter your name", "anonymous")
     //name: "test"
 //});
+
+//login
+
+function signUp(){
+    let u=document.getElementById("usernameInput").value
+    let p=document.getElementById("passwordInput").value
+    if(u&&u.length>1&&p&&p.length>1){
+        socket.emit("signUp",{
+            username: u,
+            password: p
+        });
+    }
+    else{
+        alert("Enter a username and password and click sign up to create a new account")
+    }
+}
+function login(){
+    let u=document.getElementById("usernameInput").value
+    let p=document.getElementById("passwordInput").value
+    if(u&&u.length>1&&p&&p.length>1){
+        socket.emit("login",{
+            username: u,
+            password: p
+        });
+    }
+    else{
+        alert("Please enter your username and password and click login or sign up")
+    }
+}
+//TODO: login failed
+
 
 //get white card selection
 var myWhiteCards=[]
@@ -62,8 +96,8 @@ socket.on("connected",function(data){
     whites.innerHTML=
     '<login><input type="text" placeholder="Username" id="usernameInput"><br>'+
     '<input type="password" placeholder="Password" id="passwordInput"><br><br>'+
-    '<button>login</button><br>'+
-    '<button>sign up</button></login>'
+    '<button onclick="login()">login</button><br>'+
+    '<button onclick="signUp()">sign up</button></login>'
 
 })
 socket.on("serverPrivate",function(data){
