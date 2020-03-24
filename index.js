@@ -1,6 +1,7 @@
 var express = require("express")
 var socket = require("socket.io")
 var fs = require('fs');
+var Base64 = require('js-base64').Base64;
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 var whiteCards=require('./WhiteCards').cards
@@ -16,8 +17,6 @@ fs.appendFile('loginCredentials.txt', '', function (err) {
 //get whites
 HttpClientGet('https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity/master/answers.txt', function(response) {
     whiteCards = response.split("\n")
-
-    
 
     //shuffle white cards
     for (let i = 0; i < whiteCards.length; i++) {
