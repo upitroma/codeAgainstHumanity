@@ -142,6 +142,9 @@ socket.on("ban",function(data){
     alert(data)
     gamestate.innerHTML="<p>"+data+"</p>"
 })
+socket.on("loginError",function(data){
+    alert(data)
+})
 
 
 

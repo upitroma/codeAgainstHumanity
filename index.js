@@ -132,7 +132,7 @@ var currentBlackCard=getBlackCard()
 class Player{
     constructor(socket){
         this.name = "anonymous"
-        this.socket=socket
+        this.socket=socket//TODO: replace socketlookup with this
         this.hackerSuspicion=0
         this.messagesLastSecond=0
         this.isActive=false //players are inactive untill they login
@@ -279,37 +279,49 @@ io.on("connection",function(socket){
     socketLookup[socket.id].emit("connected","")
     socketLookup[socket.id].emit("serverPrivate","connected to server on socket: "+socket.id)
     console.log("client connected on socket: ",socket.id +" Current active sockets: "+getTotalActiveSockets())
+
     io.sockets.emit("serverPublic","new connection on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
 
     socket.on("login",function(data){
         updateLoginCredentials()
 
+        validUsername=false
         authenticated=false
 
         for(i=0;i<usernameHashes.length;i++){
             if (sha256(data.username)==usernameHashes[i]){
+                validUsername=true
+                if(sha256(data.password)==passwordHashes[i]){
+                    //check if multiple people are on the same account
+                    //FIXME: it just dosen't work
+                    playerLookup.forEach(function(p){
+                        if(p.username==data.username && p.isActive){
+                            //multiple people are on the same account
+                            ban(p.socket.id,consts.strSameAccountLoginAttempt)
+                        }
+                    })
 
-                //check if multiple people are on the same account
-                //FIXME: it just dosen't work
-                playerLookup.forEach(function(p){
-                    if(p.username==data.username && p.isActive){
-                        //multiple people are on the same account
-                        ban(p.socket.id,consts.strSameAccountLoginAttempt)
-                    }
-                })
+                    console.log(data.username+" is authenticated")
+                    authenticated=true
 
-                console.log(data.username+" is authenticated")
-                authenticated=true
+                    playerLookup[socket.id].name=data.username
+                    playerLookup[socket.id].score=scores[i]
+                    playerLookup[socket.id].isActive=true
+                    socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
+                    socketLookup[socket.id].emit("newBlack",currentBlackCard)
 
-                playerLookup[socket.id].name=data.username
-                playerLookup[socket.id].score=scores[i]
-                playerLookup[socket.id].isActive=true
-
-                socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
-                socketLookup[socket.id].emit("newBlack",currentBlackCard)
-            }      
+                    //TODO: welcome user in chat
+                }
+                else{
+                    //incorrect password
+                    socketLookup[socket.id].emit("loginError","incorrect password")
+                }
+            }  
         }
-        //TODO: if not valid, send back error
+        if(!validUsername){
+            socketLookup[socket.id].emit("loginError","username does not exist")
+        }
+        validUsername=false
     })
 
     //TODO: scrub usernames
@@ -320,6 +332,7 @@ io.on("connection",function(socket){
             if (sha256(data.username)==usernameHashes[i]){
                 originalName=false
                 console.log(data.username+" is already being used")
+                playerLookup[socket.id].socket.emit("loginError","username already exists")
             }      
         }
         if(originalName){
@@ -327,8 +340,17 @@ io.on("connection",function(socket){
                 if (err) throw err;
             }); 
             updateLoginCredentials()
+
+            //login
+            console.log(data.username+" has created an account")
+            //TODO: welcome new user in chat
+            playerLookup[socket.id].name=data.username
+            playerLookup[socket.id].score=scores[i]
+            playerLookup[socket.id].isActive=true
+            socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
+            socketLookup[socket.id].emit("newBlack",currentBlackCard)
+
         }
-        //TODO: send error message if fail
     })
     
 
