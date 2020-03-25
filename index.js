@@ -104,9 +104,9 @@ blackCards.push(consts.outOfCards)
 var currentBlackCard=getBlackCard()
 
 class Player{
-    constructor(id){
+    constructor(socket){
         this.name = "anonymous"
-        this.socketId=id
+        this.socket=socket
         this.hackerSuspicion=0
         this.messagesLastSecond=0
         this.isActive=false //players are inactive untill they login
@@ -246,7 +246,7 @@ io.on("connection",function(socket){
     //remember new connection
     socket.id=clientId++
     socketLookup[socket.id]=socket
-    playerLookup[socket.id] = new Player(socket.id)
+    playerLookup[socket.id] = new Player(socket)
     //tell everyone else
     socketLookup[socket.id].emit("connected","")
     socketLookup[socket.id].emit("serverPrivate","connected to server on socket: "+socket.id)
@@ -269,8 +269,6 @@ io.on("connection",function(socket){
 
                 socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
                 socketLookup[socket.id].emit("newBlack",currentBlackCard)
-
-                console.log(playerLookup[socket.id].score)
             }      
         }
         //if not valid, send back error
@@ -291,11 +289,15 @@ io.on("connection",function(socket){
     socket.on("chat",function(data){
         m=data.message
         if((!(!m || m.length===0))&&playerLookup[socket.id].isActive){
-            //send message
-            io.sockets.emit("chat",{
-                message: scrub(m,socket.id),
-                name: playerLookup[socket.id].name
-            })
+            //send message to active players
+            for(let i=0;i<playerLookup.length;i++){
+                if(playerLookup[i].isActive){
+                    playerLookup[i].socket.emit("chat",{
+                        message: scrub(m,socket.id),
+                        name: playerLookup[socket.id].name
+                    })
+                }
+            }
         }
     });
 
