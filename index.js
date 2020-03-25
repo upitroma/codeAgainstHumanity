@@ -288,6 +288,7 @@ io.on("connection",function(socket){
 
         validUsername=false
         authenticated=false
+        multipleUsersOnAccount=false
 
         for(i=0;i<usernameHashes.length;i++){
             if (sha256(data.username)==usernameHashes[i]){
@@ -301,23 +302,25 @@ io.on("connection",function(socket){
                                 //multiple people are on the same account
                                 ban(playerLookup[i].socket.id,consts.strSameAccountLoginAttempt)
                                 ban(socket.id,consts.strSameAccountLoginAttempt)
+                                multipleUsersOnAccount=true
                                 //TODO: lock acount for set time if it persists
                             }
                         }
                     }
                     
-
-                    console.log(data.username+" is authenticated")
-                    authenticated=true
-
-                    playerLookup[socket.id].name=data.username
-                    playerLookup[socket.id].score=scores[i]
-                    playerLookup[socket.id].isActive=true
-                    socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
-                    socketLookup[socket.id].emit("newBlack",currentBlackCard)
-
-                    //welcome user in chat
-                    serverPublic("Welcome back, <username>"+playerLookup[socket.id].name+"</username>!")
+                    if(!multipleUsersOnAccount){
+                        console.log(data.username+" is authenticated")
+                        authenticated=true
+    
+                        playerLookup[socket.id].name=data.username
+                        playerLookup[socket.id].score=scores[i]
+                        playerLookup[socket.id].isActive=true
+                        socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
+                        socketLookup[socket.id].emit("newBlack",currentBlackCard)
+    
+                        //welcome user in chat
+                        serverPublic("Welcome back, <username>"+playerLookup[socket.id].name+"</username>!")
+                    }
                 }
                 else{
                     //incorrect password
