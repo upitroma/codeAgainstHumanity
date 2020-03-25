@@ -40,8 +40,8 @@ body {
 }
 #whiteCards{
     position: absolute;
-    bottom: 50px;
-    height: 400px;
+    bottom: 5%;
+    height: 40%;
     max-height: 400px;
     padding: 10px 15px;
     width: 80%;
@@ -53,9 +53,9 @@ body {
 #whiteCards button{
     position: relative;
     top: 0;
-    height: 400px;
-    max-height: 400px;
-    width: 300px;
+    height: 300px;
+    width: 30%;
+    max-width: 225px;
     display: flex;
     flex-flow: column;
 }
@@ -103,8 +103,12 @@ body {
     line-height: normal;
 }
 #blackCard{
-    height: 400px;
-    width: 300px;
+    
+    max-height: 300px;
+    max-width: 225px;
+    height: 40%;
+    width: 30%;
+    
     position: fixed;
     top: 10;
     left: 30%;
@@ -115,7 +119,7 @@ body {
 #blackCard p{
     margin-left: 20px;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-    font-size: 30px; font-style: normal;
+    font-size: 20px; font-style: normal;
     font-variant: normal; 
     font-weight: 700; 
     line-height: 26.4px;
@@ -123,9 +127,10 @@ body {
     line-height: normal;
 }
 #blackCard back{
+
     margin-left: 20px;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-    font-size: 50px; font-style: normal;
+    font-size: 40px; font-style: normal;
     font-variant: normal; 
     font-weight: 700; 
     line-height: 26.4px;
@@ -188,8 +193,9 @@ body {
     line-height: normal;
 }
 #whiteCards login{
-    height: 400px;
-    width: 300px;
+    
+    height: 300px;
+    width: 225px;
     position: fixed;
     top: 10;
     left: 30%;
@@ -197,7 +203,7 @@ body {
     opacity: 1;
 
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-    font-size: 30px;
+    font-size: 20px;
     font-style: normal;
     font-variant: normal; 
     font-weight: 700; 
@@ -213,17 +219,17 @@ body {
 
     display: block;
     margin: 0 auto;
-    width: 250px;
+    width: 200px;
     border: none;
     border-bottom: solid 1px black;
-    font-size: 30px;
+    font-size: 20px;
 }
 #whiteCards login button{
     display: block;
     margin: 0 auto;
-    width: 200px;
-    height: 50px;
+    width: 150px;
+    height: 40px;
     background-color: rgb(255, 145, 0);
     color: black;
-    font-size: 30px;
+    font-size: 25px;
 }
