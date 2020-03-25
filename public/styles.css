@@ -110,6 +110,7 @@ body {
     left: 30%;
     background-color: black;
     opacity: .8;
+    pointer-events: none;
 }
 #blackCard p{
     margin-left: 20px;
