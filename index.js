@@ -136,6 +136,7 @@ class Player{
         this.hackerSuspicion=0
         this.messagesLastSecond=0
         this.isActive=false //players are inactive untill they login
+        this.isConnected=true
         this.isLoggedIn=false
         this.score=0
         this.whites=generateHand()
@@ -276,11 +277,11 @@ io.on("connection",function(socket){
     socketLookup[socket.id]=socket
     playerLookup[socket.id] = new Player(socket)
     //tell everyone else
-    socketLookup[socket.id].emit("connected","")
+    socketLookup[socket.id].emit("connected","")//not being used
     socketLookup[socket.id].emit("serverPrivate","connected to server on socket: "+socket.id)
-    console.log("client connected on socket: ",socket.id +" Current active sockets: "+getTotalActiveSockets())
+    console.log("client connected on socket: ",socket.id +" Current active sockets: "+getTotalConnectedSockets())
 
-    io.sockets.emit("serverPublic","new connection on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
+    serverPublic("new connection on socket: "+socket.id+". Current active sockets: "+getTotalConnectedSockets())
 
     socket.on("login",function(data){
         updateLoginCredentials()
@@ -311,7 +312,7 @@ io.on("connection",function(socket){
                     socketLookup[socket.id].emit("newBlack",currentBlackCard)
 
                     //welcome user in chat
-                    io.sockets.emit("serverPublic","Welcome back, <username>"+playerLookup[socket.id].name+"</username>!")
+                    serverPublic("Welcome back, <username>"+playerLookup[socket.id].name+"</username>!")
                 }
                 else{
                     //incorrect password
@@ -327,34 +328,40 @@ io.on("connection",function(socket){
 
     //TODO: scrub usernames
     socket.on("signUp",function(data){
-        //check if new username
-        originalName=true
-        for(i=0;i<usernameHashes.length;i++){
-            if (sha256(data.username)==usernameHashes[i]){
-                originalName=false
-                console.log(data.username+" is already being used")
-                playerLookup[socket.id].socket.emit("loginError","username already exists")
-            }      
+        //check for hacking attempt
+
+        if(usernameIsSafe(data.username,socket.id)){
+            //check if new username
+            originalName=true
+            for(i=0;i<usernameHashes.length;i++){
+                if (sha256(data.username)==usernameHashes[i]){
+                    originalName=false
+                    console.log(data.username+" is already being used")
+                    playerLookup[socket.id].socket.emit("loginError","username already exists")
+                }      
+            }
+            if(originalName){
+                fs.appendFile('loginCredentials.txt', sha256(data.username)+":"+sha256(data.password)+":0"+"\n", function (err) {
+                    if (err) throw err;
+                }); 
+                updateLoginCredentials()
+
+                //login
+                console.log(data.username+" has created an account")
+
+                playerLookup[socket.id].name=data.username
+                playerLookup[socket.id].score=scores[i]
+                playerLookup[socket.id].isActive=true
+                socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
+                socketLookup[socket.id].emit("newBlack",currentBlackCard)
+
+                //welcome new user in chat
+                serverPublic("Please welcome our newest member, <username>"+playerLookup[socket.id].name+"</username>!")
+
+            }
         }
-        if(originalName){
-            fs.appendFile('loginCredentials.txt', sha256(data.username)+":"+sha256(data.password)+":0"+"\n", function (err) {
-                if (err) throw err;
-            }); 
-            updateLoginCredentials()
 
-            //login
-            console.log(data.username+" has created an account")
-            
-            playerLookup[socket.id].name=data.username
-            playerLookup[socket.id].score=scores[i]
-            playerLookup[socket.id].isActive=true
-            socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
-            socketLookup[socket.id].emit("newBlack",currentBlackCard)
-
-            //welcome new user in chat
-            io.sockets.emit("serverPublic","Please welcome our newest member, <username>"+playerLookup[socket.id].name+"</username>!")
-
-        }
+        
     })
     
 
@@ -377,9 +384,13 @@ io.on("connection",function(socket){
 
     //keep track of players
     socket.on('disconnect', function(){
-        console.info('user disconnected from socket: ' + socket.id+" Current active sockets: "+getTotalActiveSockets());
+        console.info('user disconnected from socket: ' + socket.id+" Current active sockets: "+getTotalConnectedSockets());
+        if(playerLookup[socket.id].isActive){
+            serverPublic(" <username>"+playerLookup[socket.id].name+"</username> has left the game.")
+        }
         playerLookup[socket.id].isActive=false
-        io.sockets.emit("serverPublic","user disconnected on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
+        playerLookup[socket.id].isConnected=false
+        serverPublic("user disconnected on socket: "+socket.id+". Current active sockets: "+getTotalConnectedSockets())
     });
 
     //get player's white card
@@ -450,10 +461,10 @@ function getIp(){
     return addresses
 }
 
-function getTotalActiveSockets(){
+function getTotalConnectedSockets(){
     var total=0
     for(var i=0;i<socketLookup.length;i++){
-        if(playerLookup[i].isActive){
+        if(playerLookup[i].isConnected){
             total++
         }
     }
@@ -517,6 +528,27 @@ function scrub(s,id){
     //remove pesky html charactors
     s=s.split("<").join("&lt;").split(">").join("&gt;")
     return s
+}
+function usernameIsSafe(s,id){
+    if(!s||s.length===0){
+        return false
+    }
+    if(lengthInUtf8Bytes(s)>consts.maxByteSize){
+
+        if(lengthInUtf8Bytes(s)>1024){
+            ban(id,"banned for sending over 1024 bytes of data at once.")
+            return false
+        }
+        playerLookup[id].socket.emit("loginError","username too big")
+        return false
+    }
+
+    if(s.includes("<")&&s.includes(">")){
+        playerLookup[id].socket.emit("loginError","username can not contain '<' or '>'")
+        return false
+    }
+
+    return true
 }
 function randomChoice(arr){
     return arr[Math.floor(Math.random() * arr.length)];
@@ -593,4 +625,12 @@ function ban(id,reason){
     playerLookup[id].socket.emit("ban",reason)
     playerLookup[id].isActive=false
     console.log(playerLookup[id].name+" banned for "+reason)
+}
+
+function serverPublic(message){
+    for(let i=0;i<playerLookup.length;i++){
+        if(playerLookup[i].isActive){
+            playerLookup[i].socket.emit("serverPublic",message)
+        }
+    }
 }
