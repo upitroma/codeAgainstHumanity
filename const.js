@@ -2,10 +2,10 @@ var constants = {
 
 
     //gameplay
-    NSFW: false,
+    NSFW: true,
     cardsPerHand: 6,
-    choosingTimer:20,
-    voteingTimer:15,
+    choosingTimer:10,
+    voteingTimer:5,
     resultsTimer:5,
     newRoundTimer:6,
 

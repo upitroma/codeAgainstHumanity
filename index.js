@@ -193,12 +193,14 @@ function gameState(){
         }
         else{
             let winningCard = cardsPlayedThisRound[findWinner(votes)]
-            let winningPlayer = "unknown (Did the player leave or something? This shouldn't've happened.)"
+            let winningPlayer = "unknown (Did nobody vote? This shouldn't've happened.)"
     
             for(let i=0;i<playerLookup.length;i++){
                 if(playerLookup[i].isActive){
                     if(playerLookup[i].currentWhiteCard==winningCard){
                         winningPlayer=playerLookup[i].name
+                        playerLookup[i].score++
+                        //TODO: save the score in the loginCredentials file
                     }
                 }
             }
