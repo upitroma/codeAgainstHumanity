@@ -293,14 +293,19 @@ io.on("connection",function(socket){
             if (sha256(data.username)==usernameHashes[i]){
                 validUsername=true
                 if(sha256(data.password)==passwordHashes[i]){
+                    
                     //check if multiple people are on the same account
-                    //FIXME: it just dosen't work
-                    playerLookup.forEach(function(p){
-                        if(p.username==data.username && p.isActive){
-                            //multiple people are on the same account
-                            ban(p.socket.id,consts.strSameAccountLoginAttempt)
+                    for(let i=0;i<playerLookup.length;i++){
+                        if(playerLookup[i].isActive){
+                            if(playerLookup[i].name==data.username){
+                                //multiple people are on the same account
+                                ban(playerLookup[i].socket.id,consts.strSameAccountLoginAttempt)
+                                ban(socket.id,consts.strSameAccountLoginAttempt)
+                                //TODO: lock acount for set time if it persists
+                            }
                         }
-                    })
+                    }
+                    
 
                     console.log(data.username+" is authenticated")
                     authenticated=true
