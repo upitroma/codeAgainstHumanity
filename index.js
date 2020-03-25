@@ -93,6 +93,7 @@ var app = express();
 var server = app.listen(4000,function(){
     console.log("Server is up on http://"+getIp()+":4000")
 });
+console.log("NSFW: "+consts.NSFW)
 app.use(express.static("public"))
 
 //socket setup

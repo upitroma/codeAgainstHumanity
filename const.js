@@ -2,7 +2,7 @@ var constants = {
 
 
     //gameplay
-    NSFW: true,
+    NSFW: false,
     cardsPerHand: 6,
     choosingTimer: 20,
     voteingTimer: 15,
