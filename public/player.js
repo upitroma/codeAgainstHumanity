@@ -36,7 +36,8 @@ function signUp(){
         });
     }
     else{
-        alert("Enter a username and password and click sign up to create a new account")
+        document.getElementById("usernameInput").placeholder="New Username"
+        document.getElementById("passwordInput").placeholder="New Password"
     }
 }
 function login(){
@@ -49,7 +50,8 @@ function login(){
         });
     }
     else{
-        alert("Please enter your username and password and click login or sign up")
+        document.getElementById("usernameInput").placeholder="Username"
+        document.getElementById("passwordInput").placeholder="Password"
     }
 }
 //TODO: login failed
@@ -104,7 +106,7 @@ socket.on("serverPrivate",function(data){
     serverInfo.innerHTML= "<p>"+"Server"+": "+data+"</p>";
 });
 socket.on("serverPublic",function(data){
-    output.innerHTML+= "<p>"+"Server"+": "+data+"</p>";
+    output.innerHTML+= "<p>"+"Server"+": "+data+"</p>"; //TODO: server css
 });
 socket.on("chat",function(data){
     output.innerHTML+= "<p><username>["+data.name+"]: </username>"+data.message+"</p>";

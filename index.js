@@ -574,10 +574,10 @@ function updateLoginCredentials(){
         const content = data;
     
         content.split("\n").forEach(function(l){
-            login=l.split(":")
+            login=l.split(":") //TODO: split after 64 charactors
             u.push(login[0])
             p.push(login[1])
-            s.push(parseInt(login[2]))
+            s.push(parseInt(login[2])) //TODO: encode with 4 hex/base64 charactors instead of int
         });
         usernameHashes=u
         passwordHashes=p
