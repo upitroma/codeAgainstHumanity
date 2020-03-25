@@ -1,21 +1,26 @@
 var constants = {
 
-    hackerSuspicionThreshold: 100,
-    maxByteSize: 200,
-    maxMessagesPerSecond: 1,
 
-    playingMultipleCardsPunish: 20,
-    voteingMoreThanOncePunish: 20,
-    largeMessagePunish: 30,
-    htmlInjectionPunish: 10,
-    spammingPunish:5,
-
+    //gameplay
+    NSFW: false,
     cardsPerHand: 6,
     choosingTimer:20,
     voteingTimer:15,
     resultsTimer:5,
     newRoundTimer:6,
 
+    //BanBot™
+    hackerSuspicionThreshold: 100,
+    maxByteSize: 200,
+    maxMessagesPerSecond: 1,
+    playingMultipleCardsPunish: 20,
+    voteingMoreThanOncePunish: 20,
+    largeMessagePunish: 30,
+    htmlInjectionPunish: 10,
+    spammingPunish:5,
+
+    //strings
+    //TODO: add more
     strChooseCard: "Choose a card",
     strNewRound: "Next Round",
     strVoteCard: "Vote for your favorite",

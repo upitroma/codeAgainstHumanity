@@ -4,8 +4,8 @@ var fs = require('fs');
 var sha256 = require('js-sha256');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-var whiteCards=require('./WhiteCards').cards
-var blackCards=require('./BlackCards').cards
+var whiteCards=[]//require('./WhiteCards').cards
+var blackCards=[]//require('./BlackCards').cards
 var consts=require('./const').constants
 
 //create credential file if it dosen't exist
@@ -14,47 +14,54 @@ fs.appendFile('loginCredentials.txt', '', function (err) {
 }); 
 updateLoginCredentials()
 
+function addNSFW(){
+    //get whites
+    HttpClientGet('https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity/master/answers.txt', function(response) {
+        whiteCards = response.split("\n")
 
+        //shuffle white cards
+        for (let i = 0; i < whiteCards.length; i++) {
+            let r = Math.floor(Math.random() * (i));
+            temp = whiteCards[i]
+            whiteCards[i]=whiteCards[r]
+            whiteCards[r]=temp
+        }
+    });
+    //get blacks
+    HttpClientGet('https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity/master/questions.txt', function(response) {
+        blackCards = response.split("\n")
 
-//get whites
-HttpClientGet('https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity/master/answers.txt', function(response) {
-    whiteCards = response.split("\n")
+        //only single blanks
+        for(let i=0;i<blackCards.length;i++){
 
-    //shuffle white cards
-    for (let i = 0; i < whiteCards.length; i++) {
-        let r = Math.floor(Math.random() * (i));
-        temp = whiteCards[i]
-        whiteCards[i]=whiteCards[r]
-        whiteCards[r]=temp
-    }
-});
-//get blacks
-HttpClientGet('https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity/master/questions.txt', function(response) {
-    blackCards = response.split("\n")
+            let count = 0;
+            for(let j = 0; j < blackCards[i].length; ++j){
+                if(blackCards[i][j] == "_"){
+                    count++;
+                }
+            }
 
-    //only single blanks
-    for(let i=0;i<blackCards.length;i++){
-
-        let count = 0;
-        for(let j = 0; j < blackCards[i].length; ++j){
-            if(blackCards[i][j] == "_"){
-                count++;
+            if(count>0){
+                blackCards.splice(i,1)
             }
         }
 
-        if(count>0){
-            blackCards.splice(i,1)
+        //shuffle black cards
+        for (let i = 0; i < blackCards.length; i++) {
+            let r = Math.floor(Math.random() * (i));
+            temp = blackCards[i]
+            blackCards[i]=blackCards[r]
+            blackCards[r]=temp
         }
-    }
+    });
+}
+if(consts.NSFW){
+    addNSFW()
+}
+else{
+    addSFW()
+}
 
-    //shuffle black cards
-    for (let i = 0; i < blackCards.length; i++) {
-        let r = Math.floor(Math.random() * (i));
-        temp = blackCards[i]
-        blackCards[i]=blackCards[r]
-        blackCards[r]=temp
-    }
-});
 
 //app setup
 var app = express();
@@ -506,5 +513,31 @@ function updateLoginCredentials(){
         usernameHashes=u
         passwordHashes=p
         scores=s
+    });
+}
+
+function addSFW(){
+    fs.readFile("WhiteCards.txt",'utf8', function read(err, data) {
+        lines=[]
+        if (err) {
+            throw err;
+        }
+        const content = data;
+    
+        content.split("\n").forEach(function(l){
+            whiteCards.push(l)
+        });
+    });
+
+    fs.readFile("BlackCards.txt",'utf8', function read(err, data) {
+        lines=[]
+        if (err) {
+            throw err;
+        }
+        const content = data;
+    
+        content.split("\n").forEach(function(l){
+            blackCards.push(l)
+        });
     });
 }
