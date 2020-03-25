@@ -55,6 +55,31 @@ function addNSFW(){
         }
     });
 }
+function addSFW(){
+    fs.readFile("WhiteCards.txt",'utf8', function read(err, data) {
+        lines=[]
+        if (err) {
+            throw err;
+        }
+        const content = data;
+    
+        content.split("\n").forEach(function(l){
+            whiteCards.push(l)
+        });
+    });
+
+    fs.readFile("BlackCards.txt",'utf8', function read(err, data) {
+        lines=[]
+        if (err) {
+            throw err;
+        }
+        const content = data;
+    
+        content.split("\n").forEach(function(l){
+            blackCards.push(l)
+        });
+    });
+}
 if(consts.NSFW){
     addNSFW()
 }
@@ -260,6 +285,15 @@ io.on("connection",function(socket){
 
         for(i=0;i<usernameHashes.length;i++){
             if (sha256(data.username)==usernameHashes[i]){
+
+                //check if multiple people are on the same account
+                playerLookup.forEach(function(p){
+                    if(p.username==data.username&&p.isActive){
+                        //multiple people are on the same account
+                        //TODO: warn/ban them both
+                    }
+                })
+
                 console.log(data.username+" is authenticated")
                 authenticated=true
 
@@ -271,16 +305,26 @@ io.on("connection",function(socket){
                 socketLookup[socket.id].emit("newBlack",currentBlackCard)
             }      
         }
-        //if not valid, send back error
+        //TODO: if not valid, send back error
     })
 
     //TODO: scrub usernames
     socket.on("signUp",function(data){
-        //TODO: check if new username 
-        fs.appendFile('loginCredentials.txt', sha256(data.username)+":"+sha256(data.password)+":0"+"\n", function (err) {
-            if (err) throw err;
-        }); 
-        updateLoginCredentials()
+        //check if new username
+        originalName=true
+        for(i=0;i<usernameHashes.length;i++){
+            if (sha256(data.username)==usernameHashes[i]){
+                originalName=false
+                console.log(data.username+" is already being used")
+            }      
+        }
+        if(originalName){
+            fs.appendFile('loginCredentials.txt', sha256(data.username)+":"+sha256(data.password)+":0"+"\n", function (err) {
+                if (err) throw err;
+            }); 
+            updateLoginCredentials()
+        }
+        //TODO: send error message if fail
     })
     
 
@@ -394,7 +438,7 @@ function lengthInUtf8Bytes(str) {
 
 //pranks users that try to hack
 function prank(){
-    return randomChoice(["i prefer apple music","i hate waffles","i hate star wars","mayonnaise is better than ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water","i think im addicted to barbie","i unironically blippi"])
+    return randomChoice(["i prefer apple music","i hate waffles","i hate star wars","mayonnaise is better than ketchup","pineapple belongs on pizza","i just bought some belle delphine bath water","i think im addicted to barbie","i love blippi"])
 }
 function scrub(s,id){
 
@@ -406,9 +450,7 @@ function scrub(s,id){
     if(lengthInUtf8Bytes(s)>consts.maxByteSize){
 
         if(lengthInUtf8Bytes(s)>1024){
-            //just ban them
-            socketLookup[id].disconnect()
-            console.log(playerLookup[id].name+" banned for sending over 1024 bytes of data at once.")
+            ban(id,"banned for sending over 1024 bytes of data at once.")
         }
 
         //replace their message with something funny
@@ -439,8 +481,7 @@ function scrub(s,id){
 
     //kick if too suspicious
     if(playerLookup[id].hackerSuspicion>=consts.hackerSuspicionThreshold){
-        socketLookup[id].disconnect()
-        console.log(playerLookup[id].name+" banned for repeated infractions")
+        ban(id,"banned for repeated infractions")
     }
 
     //remove pesky html charactors
@@ -517,29 +558,9 @@ function updateLoginCredentials(){
         scores=s
     });
 }
-
-function addSFW(){
-    fs.readFile("WhiteCards.txt",'utf8', function read(err, data) {
-        lines=[]
-        if (err) {
-            throw err;
-        }
-        const content = data;
-    
-        content.split("\n").forEach(function(l){
-            whiteCards.push(l)
-        });
-    });
-
-    fs.readFile("BlackCards.txt",'utf8', function read(err, data) {
-        lines=[]
-        if (err) {
-            throw err;
-        }
-        const content = data;
-    
-        content.split("\n").forEach(function(l){
-            blackCards.push(l)
-        });
-    });
+function ban(id,reason){
+    //TODO: lock account for set time
+    playerLookup[id].socket.emit("ban",reason)
+    playerLookup[id].isActive=false
+    console.log(playerLookup[id].name+" banned for "+reason)
 }

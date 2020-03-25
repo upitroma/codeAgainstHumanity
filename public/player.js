@@ -138,6 +138,10 @@ socket.on("results",function(data){
     whites.innerHTML= "";
     whites.innerHTML+= "<button onClick=whiteClick("+i+")><div>"+data.winningCard+"<br>Played by: "+data.winningPlayer+"</div></button>";
 })
+socket.on("ban",function(data){
+    alert(data)
+    gamestate.innerHTML="<p>"+data+"</p>"
+})
 
 
 
