@@ -9,6 +9,7 @@
 #chat{
     position: fixed;
     max-width: 300px;
+    width: 20%;
     right: 0;
     margin: 30px auto;
     border: 1px solid #ddd;
