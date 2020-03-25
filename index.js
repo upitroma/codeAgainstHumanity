@@ -1,7 +1,7 @@
 var express = require("express")
 var socket = require("socket.io")
 var fs = require('fs');
-var Base64 = require('js-base64').Base64;
+var sha256 = require('js-sha256');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 var whiteCards=require('./WhiteCards').cards
@@ -12,6 +12,8 @@ var consts=require('./const').constants
 fs.appendFile('loginCredentials.txt', '', function (err) {
     if (err) throw err;
 }); 
+updateLoginCredentials()
+
 
 
 //get whites
@@ -40,7 +42,7 @@ HttpClientGet('https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity
             }
         }
 
-        if(count>1){
+        if(count>0){
             blackCards.splice(i,1)
         }
     }
@@ -102,7 +104,7 @@ class Player{
         this.messagesLastSecond=0
         this.isActive=false //players are inactive untill they login
         this.isLoggedIn=false
-        this.blacks=[]
+        this.score=0
         this.whites=generateHand()
         this.currentWhiteCard=""
         this.hasVotedThisRound=false
@@ -114,6 +116,12 @@ var gamestate=consts.strChooseCard
 var GameTimer=consts.choosingTimer
 var cardsPlayedThisRound=[]
 var votes=[]
+
+//security/persistence
+var usernameHashes=[]
+var passwordHashes=[]
+var scores=[]
+
 function gameState(){
 
     //start of vote
@@ -239,10 +247,35 @@ io.on("connection",function(socket){
     io.sockets.emit("serverPublic","new connection on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
 
     socket.on("login",function(data){
-        //if valid
-        //deal cards
-        socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
-        socketLookup[socket.id].emit("newBlack",currentBlackCard)
+        updateLoginCredentials()
+
+        authenticated=false
+
+        for(i=0;i<usernameHashes.length;i++){
+            if (sha256(data.username)==usernameHashes[i]){
+                console.log(data.username+" is authenticated")
+                authenticated=true
+
+                playerLookup[socket.id].name=data.username
+                playerLookup[socket.id].score=scores[i]
+                playerLookup[socket.id].isActive=true
+
+                socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
+                socketLookup[socket.id].emit("newBlack",currentBlackCard)
+
+                console.log(playerLookup[socket.id].score)
+            }      
+        }
+        //if not valid, send back error
+    })
+
+    //TODO: scrub usernames
+    socket.on("signUp",function(data){
+        //TODO: check if new username 
+        fs.appendFile('loginCredentials.txt', sha256(data.username)+":"+sha256(data.password)+":0"+"\n", function (err) {
+            if (err) throw err;
+        }); 
+        updateLoginCredentials()
     })
     
 
@@ -265,17 +298,6 @@ io.on("connection",function(socket){
         playerLookup[socket.id].isActive=false
         io.sockets.emit("serverPublic","user disconnected on socket: "+socket.id+". Current active sockets: "+getTotalActiveSockets())
     });
-
-    //get player name
-    socket.on('username',function(data){
-        if(data.name==""||data.name=="anonymous"){
-            playerLookup[socket.id].name="anonymous"+socket.id
-        }
-        else{
-            playerLookup[socket.id].name=scrub(data.name,socket.id)
-        }
-        io.sockets.emit("serverPublic", "<username>"+playerLookup[socket.id].name +"</username> has joined the game! Current active sockets: "+getTotalActiveSockets())
-    })
 
     //get player's white card
     socket.on("playCard",function(data){
@@ -462,4 +484,27 @@ function HttpClientGet(aUrl, aCallback) {
 
     anHttpRequest.open( "GET", aUrl, true );            
     anHttpRequest.send( null );
+}
+
+function updateLoginCredentials(){
+    var u=[]
+    var p=[]
+    var s=[]
+
+    fs.readFile('loginCredentials.txt','utf8', function read(err, data) {
+        if (err) {
+            throw err;
+        }
+        const content = data;
+    
+        content.split("\n").forEach(function(l){
+            login=l.split(":")
+            u.push(login[0])
+            p.push(login[1])
+            s.push(parseInt(login[2]))
+        });
+        usernameHashes=u
+        passwordHashes=p
+        scores=s
+    });
 }
