@@ -54,17 +54,15 @@ body {
     position: relative;
     top: 0;
     height: 300px;
-    width: 30%;
-    max-width: 225px;
+    width: 225px;
     display: flex;
     flex-flow: column;
 }
 #whiteCards shortCards{
     position: relative;
     top: 0px;
-    height: 400px;
-    max-height: 400px;
-    width: 300px;
+    height: 300px;
+    width: 225px;
     display: flex;
     flex-flow: column;
     background-color: rgb(168, 168, 168);
