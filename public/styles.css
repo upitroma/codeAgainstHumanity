@@ -29,6 +29,9 @@
     color: #555;
     word-wrap: break-word;
 }
+#output p server{
+    color: rgb(135, 9, 185);
+}
 
 body {
     font-family: 'Nunito';

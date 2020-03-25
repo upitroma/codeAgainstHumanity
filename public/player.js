@@ -54,7 +54,6 @@ function login(){
         document.getElementById("passwordInput").placeholder="Password"
     }
 }
-//TODO: login failed
 
 
 //get white card selection
@@ -106,7 +105,7 @@ socket.on("serverPrivate",function(data){
     serverInfo.innerHTML= "<p>"+"Server"+": "+data+"</p>";
 });
 socket.on("serverPublic",function(data){
-    output.innerHTML+= "<p>"+"Server"+": "+data+"</p>"; //TODO: server css
+    output.innerHTML+= "<p><server>"+"[Server]"+":</server> "+data+"</p>"; //TODO: server css
 });
 socket.on("chat",function(data){
     output.innerHTML+= "<p><username>["+data.name+"]: </username>"+data.message+"</p>";

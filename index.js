@@ -310,7 +310,8 @@ io.on("connection",function(socket){
                     socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
                     socketLookup[socket.id].emit("newBlack",currentBlackCard)
 
-                    //TODO: welcome user in chat
+                    //welcome user in chat
+                    io.sockets.emit("serverPublic","Welcome back, <username>"+playerLookup[socket.id].name+"</username>!")
                 }
                 else{
                     //incorrect password
@@ -343,12 +344,15 @@ io.on("connection",function(socket){
 
             //login
             console.log(data.username+" has created an account")
-            //TODO: welcome new user in chat
+            
             playerLookup[socket.id].name=data.username
             playerLookup[socket.id].score=scores[i]
             playerLookup[socket.id].isActive=true
             socketLookup[socket.id].emit("deal",playerLookup[socket.id].whites)
             socketLookup[socket.id].emit("newBlack",currentBlackCard)
+
+            //welcome new user in chat
+            io.sockets.emit("serverPublic","Please welcome our newest member, <username>"+playerLookup[socket.id].name+"</username>!")
 
         }
     })
