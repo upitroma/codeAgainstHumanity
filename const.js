@@ -4,10 +4,10 @@ var constants = {
     //gameplay
     NSFW: true,
     cardsPerHand: 6,
-    choosingTimer:10,
-    voteingTimer:5,
-    resultsTimer:5,
-    newRoundTimer:6,
+    choosingTimer: 20,
+    voteingTimer: 15,
+    resultsTimer: 5,
+    newRoundTimer: 6,
 
     //BanBot™
     hackerSuspicionThreshold: 100,
@@ -26,6 +26,7 @@ var constants = {
     strVoteCard: "Vote for your favorite",
     strResults: "Round Results",
     outOfCards: "I'm all out of cards. Feel free to make your own and send them to me. I'll try to add them in. Just burn a card or something.",
+    strSameAccountLoginAttempt: "disconnected because someone else tried to log in to your account. Contact me to change your password if this persists"
 }
 
 exports.constants=constants;

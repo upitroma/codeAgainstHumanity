@@ -289,10 +289,11 @@ io.on("connection",function(socket){
             if (sha256(data.username)==usernameHashes[i]){
 
                 //check if multiple people are on the same account
+                //FIXME: it just dosen't work
                 playerLookup.forEach(function(p){
-                    if(p.username==data.username&&p.isActive){
+                    if(p.username==data.username && p.isActive){
                         //multiple people are on the same account
-                        //TODO: warn/ban them both
+                        ban(p.socket.id,consts.strSameAccountLoginAttempt)
                     }
                 })
 
