@@ -12,10 +12,12 @@ or<br>
 drag index.js onto node.exe
 
 # Adding New Cards
-new cards can be added to the BlackCards.js and WhiteCards.js respectively
+new SFW cards can be added to the BlackCards.txt and WhiteCards.txt respectively<br>
+NSFW cards are currently being stolen from https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity (not mine)
+
 
 # TODO
-* make stylesheet better/more adaptive
-* voting system
-* scoring system
-* usernames
+* scorekeeping
+* better login system
+* general polishing
+* display if in NSFW mode

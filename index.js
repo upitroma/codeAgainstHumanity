@@ -4,8 +4,8 @@ var fs = require('fs');
 var sha256 = require('js-sha256');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-var whiteCards=[]//require('./WhiteCards').cards
-var blackCards=[]//require('./BlackCards').cards
+var whiteCards=[]
+var blackCards=[]
 var consts=require('./const').constants
 
 //create credential file if it dosen't exist
