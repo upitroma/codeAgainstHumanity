@@ -90,8 +90,8 @@ else{
 
 //app setup
 var app = express();
-var server = app.listen(4000,function(){
-    console.log("Server is up on http://"+getIp()+":4000")
+var server = app.listen(consts.PORT,function(){
+    console.log("Server is up on http://"+getIp()+":"+consts.PORT)
 });
 console.log("NSFW: "+consts.NSFW)
 app.use(express.static("public"))
@@ -293,7 +293,7 @@ io.on("connection",function(socket){
             if (sha256(data.username)==usernameHashes[i]){
                 validUsername=true
                 if(sha256(data.password)==passwordHashes[i]){
-                    
+
                     //check if multiple people are on the same account
                     for(let i=0;i<playerLookup.length;i++){
                         if(playerLookup[i].isActive){

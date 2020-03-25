@@ -1,5 +1,7 @@
 var constants = {
 
+    PORT: 4000,
+
 
     //gameplay
     NSFW: false,
