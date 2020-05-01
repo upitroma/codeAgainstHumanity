@@ -13,7 +13,7 @@ this is probably not family friendly
 
 # Adding New Cards
 new SFW cards can be added to the BlackCards.txt and WhiteCards.txt respectively<br>
-NSFW cards are currently being stolen from https://raw.githubusercontent.com/nodanaonlyzuul/against-humanity (not mine)
+NSFW cards are currently being stolen from https://github.com/nodanaonlyzuul/against-humanity (not mine)
 
 
 # TODO
