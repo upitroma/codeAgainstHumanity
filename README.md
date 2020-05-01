@@ -1,5 +1,6 @@
 # codeAgainstHumanity
 a cards against humanity clone in node.js
+![Screenshot of game](https://github.com/upitroma/codeAgainstHumanity/screenshot.png)
 
 # disclaimer
 this is probably not family friendly
