@@ -12,7 +12,7 @@ var constants = {
     newRoundTimer: 6,
 
     //BanBot™
-    hackerSuspicionThreshold: 100,
+    hackerSuspicionThreshold: 1000,
     maxByteSize: 200,
     maxMessagesPerSecond: 1,
     playingMultipleCardsPunish: 20,
