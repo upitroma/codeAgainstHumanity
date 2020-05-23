@@ -8,7 +8,8 @@ this is probably not family friendly
 # to run
 1. make sure you have node.js
 2. download/clone
-3. run node index.js
+3. tweak settings to your liking in const.js
+4. run node index.js
 
 
 
